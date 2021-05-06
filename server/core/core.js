@@ -6,6 +6,7 @@ const childProcess = require('child_process');
 const emoji = require('node-emoji');
 const system = require('../../system_confs/system_vars.json');
 const mongoose = require('mongoose');
+const keys = require('../../system_confs/api_keys.json');
 
 //Variables and Constants
 var coreVars = {
@@ -13,7 +14,8 @@ var coreVars = {
  "installedDir": path.join(__dirname, '../..'),
  "projectName": "fat",
  "dbServer": "mongodb://localhost:2702/?tls=true&tlsAllowInvalidCertificates=true",
- "dbName": "fat"
+ "dbName": "fat",
+ "keys": keys
 }
 
 //Required directories
@@ -130,7 +132,6 @@ module.exports = {
  genRegular,
  genSpecial,
  getRandomNumber,
- loadCollection,
  createDir,
  changePerm,
  incorrectUser,

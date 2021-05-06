@@ -113,4 +113,5 @@ screenlog.0
 *_storage
 /trash
 /system_confs/system_vars.json
+/system_confs/api_keys.json
 /server/view/public/downloads
