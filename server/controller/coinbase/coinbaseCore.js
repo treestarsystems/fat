@@ -63,8 +63,20 @@ async function getAccounts () {
  }
 }
 
+function getAccountsPreProcessor (accountsArray) {
+ for (let a = 0; a < accountsArray.length; a++) {
+  delete accountsArray[a].id;
+  delete accountsArray[a].currency.asset_id;
+  delete accountsArray[a].resource_path;
+  delete accountsArray[a].allow_deposits;
+  delete accountsArray[a].allow_witdrawls;
+  if (a == accountsArray.length-1) return accountsArray;
+ }
+}
+
 module.exports = {
  generateCBAccessSign,
  getExchangeRates,
- getAccounts
+ getAccounts,
+ getAccountsPreProcessor
 }

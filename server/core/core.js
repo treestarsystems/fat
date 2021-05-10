@@ -15,6 +15,8 @@ var coreVars = {
  "projectName": "fat",
  "dbServer": "mongodb://localhost:2702/?tls=true&tlsAllowInvalidCertificates=true",
  "dbName": "fat",
+ "dbAccountCollection":"accountData",
+ "dbUserCollection":"userData",
  "keys": keys
 }
 

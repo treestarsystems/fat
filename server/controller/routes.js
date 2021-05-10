@@ -1,26 +1,41 @@
 //Destination: server/controller
-const core = require('../core/core.js');
 
 //API Endpoints
-//const endpointName = require('./api/routes/endpointName');
+const coinbase = require('./api/coinbase');
+const m1finance = require('./api/m1finance');
+const user = require('./api/user');
 
 function apiEndpoint (app) {
-// app.use('/endpointName', endpointName);
+ app.use('/api/coinbase', coinbase);
+ app.use('/api/m1finance', m1finance);
+ app.use('/user', user);
 }
 
 function pagesEndpoint (app) {
  //Pages
-// app.get('/', (req, res) => {
-//  res.render('templateName', {title: 'Page Title', layout: 'layoutName'});
-// });
 
-// app.get('/logout', (req,res) => {
-//  req.logout();
-//  res.redirect('/login');
-// });
+/*
+ //User Pages
+ app.get('/login', core.forwardAuthenticated, (req, res) => {
+  res.render('user/login', {title: 'Login', layout: 'login'});
+ });
+ app.get('/register', (req, res) => {
+  res.render('user/register', {title: 'Register', layout: 'login'});
+ });
+ app.get('/profile', (req, res) => {
+  res.render('user/profile', {title: 'Profile', layout: 'login'});
+ });
+ app.get('/password-reset', (req, res) => {
+  res.render('user/password-reset', {title: 'Password Reset', layout: 'login'});
+ });
+ app.get('/logout', (req,res) => {
+  req.logout();
+  res.redirect('/login');
+ });
+*/
 }
 
 module.exports = {
-// apiEndpoint,
-// pagesEndpoint
+ apiEndpoint,
+ pagesEndpoint
 }
