@@ -3,11 +3,17 @@
 //API Endpoints
 const coinbase = require('./api/coinbase');
 const m1finance = require('./api/m1finance');
+const add = require('./api/add');
+const remove = require('./api/remove');
+const get = require('./api/get');
 const user = require('./api/user');
 
 function apiEndpoint (app) {
  app.use('/api/coinbase', coinbase);
  app.use('/api/m1finance', m1finance);
+ app.use('/api/add', add);
+ app.use('/api/remove', remove);
+ app.use('/api/get', get);
  app.use('/user', user);
 }
 

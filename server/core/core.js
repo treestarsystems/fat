@@ -13,12 +13,22 @@ var coreVars = {
  "systemUser": '../../system_confs/system_vars.json',
  "installedDir": path.join(__dirname, '../..'),
  "projectName": "fat",
- "dbServer": "mongodb://localhost:2702/?tls=true&tlsAllowInvalidCertificates=true",
+ "dbServer": "mongodb://localhost:2702/fat?tls=true&tlsAllowInvalidCertificates=true",
  "dbName": "fat",
  "dbAccountCollection":"accountData",
+ "dbAccountEntryCollection":"accountEntryData",
  "dbUserCollection":"userData",
+ "dbSessionsColleciton":"sessionData",
  "keys": keys
-}
+};
+
+var coreRegExs = {
+ "accountTypeValidaton":/^retirement$|^generalInvesting$|^crypto$|^debt$|^checking$|^saving$|^creditScore$/,
+ "brokerageValidaton":/^m1finance$|^coinbase$|^massmutual$|^brightstarcreditunion$/,
+ "entryTypeValidaton":/^update$|^financeTracker$|^bill$/,
+ "accessLevelValidaton":/member|admin/
+// "Validaton":,
+};
 
 //Required directories
 coreVars.systemConfsDir = `${coreVars.installedDir}/system_confs`;
@@ -130,6 +140,17 @@ function uuidv4() {
  });
 }
 
+//Source: https://learnersbucket.com/examples/javascript/how-to-validate-json-in-javascript/
+function validateJSON (obj) {
+ let o = JSON.stringify(obj);
+ try{
+  JSON.parse(o);
+ } catch (e) {
+  return false;
+ }
+ return true;
+}
+
 module.exports = {
  genRegular,
  genSpecial,
@@ -138,11 +159,13 @@ module.exports = {
  changePerm,
  incorrectUser,
  coreVars,
+ coreRegExs,
  system,
  genSpecialOnly,
  randomCaps,
  insertSpecialChars,
  getRandomInt,
  replaceAt,
- uuidv4
+ uuidv4,
+ validateJSON
 }

@@ -1,54 +1,12 @@
 const coinbaseCore = require('./coinbaseCore.js');
 
-//coinbaseCore.getAccounts().then((response) => console.log(response));
-//coinbaseCore.getExchangeRates('XLM','USD').then((response) => console.log(response));
-
-/*
-function resCallBack(v) {
- let resObj = {
-  "status":"",
-  "message":"",
-  "payload":"",
- }
- if (v.length == 0) {
-  resObj.status = "failure";
-  resObj.message = "Empty Array Returned";
-  res.send(resObj).status(204);
- } else {
-  resObj.status = "success";
-  resObj.message = "There's Your Sign!";
-  resObj.payload = v;
-  res.send(resObj).status(200);
- }
-}
-
-
-coinbaseCore.getAccounts()
- .then(async (response) => {
-  let finalResponse = [];
-  response.forEach(async (a,i) => {
-   let price = await coinbaseCore.getExchangeRates(a.currency.code,'USD').then((response));
-   a.balance['exchangPrice'] = price;
-   a.balance['totalValue'] = price * a.balance.amount;
-   finalResponse.push(a);
-   if (response.length-1 == i) return calledCallback(finalResponse);
-  });
- });
-*/
-//Pass Object with Options
-/*
- {
-  "payload":"",
-  "portfolioBalance":"",
-  "callback":"",
- }
-*/
 function resCallBack(obj) {
  let resObj = {
   "status":"",
   "message":"",
-  "payload":"",
-  "portfolioBalance":""
+  "timeStamp": Date.now(),
+  "portfolioBalance":"",
+  "payload":""
  }
  if (obj.payload.length == 0) {
   resObj.status = "failure";

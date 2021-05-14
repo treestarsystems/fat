@@ -1,7 +1,8 @@
 //Validation Schema for input fields.
+const core = require('../core/core.js');
 const joi = require('joi');
 
-const accountEntryValidation = joi.object({
+const accountValidation = joi.object({
  accountName: joi.string()
   .alphanum()
   .min(3)
@@ -10,18 +11,34 @@ const accountEntryValidation = joi.object({
   .required(),
  accountType: joi.string()
   .label('Account Type')
-  .pattern(/^retirement$|^generalInvesting$|^crypto$|^debt$|^checking$|^saving$|^creditScore$/)
+  .pattern(core.coreRegExs.accountTypeValidaton)
   .message("\"Account Type\" selection is invalid")
   .required(),
  brokerage: joi.string()
   .label('Brokerage')
-  .pattern(/^m1finance$|^coinbase$|^massmutual$/)
+  .pattern(core.coreRegExs.brokerageValidaton)
   .message("\"Brokerage\" selection is invalid")
+  .required()
+});
+
+const accountEntryValidation = joi.object({
+ accountUUID: joi.string()
+  .label('Account UUID')
+  .required(),
+ entryDescription: joi.string()
+  .label('Description')
+  .max(255)
+  .message("\"Description\" must be less than 255 characters"),
+ entryType: joi.string()
+  .label('Entry Type')
+  .pattern(core.coreRegExs.entryTypeValidaton)
+  .message("\"Entry Type\" is invalid")
   .required(),
  balance: joi.number()
   .label('Balance')
+  .positive()
   .required(),
-})
+});
 
 const registerValidation = joi.object({
  username: joi.string()
@@ -40,7 +57,7 @@ const registerValidation = joi.object({
  accessLevel: joi.string()
   .required(6)
   .label('Access Level')
-  .pattern(/member|admin/)
+  .pattern(core.coreRegExs.accessLevelValidaton)
   .message("\"Access Level\" selection is invalid"),
  password: joi.string()
   .min(6)
@@ -67,6 +84,7 @@ const loginValidation = joi.object({
 });
 
 module.exports = {
+ accountValidation,
  accountEntryValidation,
  registerValidation,
  loginValidation

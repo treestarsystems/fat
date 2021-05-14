@@ -10,20 +10,43 @@ const accountSchema = new mongoose.Schema({
  },
  accountDescription: {
   type: String,
-  required: true
+  max: 255
  },
  accountType: {
   type: String,
-  match: /^retirement$|^generalInvesting$|^crypto$|^debt$|^checking$|^saving$|^creditScore$/,
+  match: core.coreRegExs.accountTypeValidaton,
   required: true,
-  min: 6,
   max: 255
  },
  brokerage: {
   type: String,
-  match: /^m1finance$|^coinbase$|^massmutual$/,
-  required: true,
+  match: core.coreRegExs.brokerageValidaton,
   min: 3,
+  max: 255
+ },
+ accountUUID: {
+  type: String,
+  default: `A-${core.uuidv4()}`
+ },
+ timeStamp: {
+  type: Number,
+  default: Date.now()
+ }
+});
+
+const accountEntrySchema = new mongoose.Schema({
+ accountUUID: {
+  type: String,
+  required: true
+ },
+ entryDescription: {
+  type: String,
+  max: 255
+ },
+ entryType: {
+  type: String,
+  match: core.coreRegExs.entryTypeValidaton,
+  required: true,
   max: 255
  },
  balance: {
@@ -32,11 +55,11 @@ const accountSchema = new mongoose.Schema({
  },
  entryUUID: {
   type: String,
-  default: core.uuidv4()
+  default: `E-${core.uuidv4()}`
  },
- date: {
-  type: Date,
-  default: Date.now
+ timeStamp: {
+  type: Number,
+  default: Date.now()
  }
 });
 
@@ -63,8 +86,9 @@ const userSchema = new mongoose.Schema({
   type: String,
   required: true
  },
- userId: {
+ userUUID: {
   type: String,
+  default: `U-${core.uuidv4()}`,
   required: true
  },
  hash: {
@@ -75,17 +99,18 @@ const userSchema = new mongoose.Schema({
   type: String,
   required: true
  },
- date: {
+ timeStamp: {
   type: Date,
   default: Date.now
  }
 });
 
 let accountModel = mongoose.model(core.coreVars.dbAccountCollection,accountSchema,core.coreVars.dbAccountCollection);
+let accountEntryModel = mongoose.model(core.coreVars.dbAccountEntryCollection,accountEntrySchema,core.coreVars.dbAccountEntryCollection);
 let userModel = mongoose.model(core.coreVars.dbUserCollection,userSchema,core.coreVars.dbUserCollection);
 
 module.exports = {
  accountModel,
+ accountEntryModel,
  userModel
 }
-
