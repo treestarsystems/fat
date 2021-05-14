@@ -5,7 +5,7 @@ function resCallBack(obj) {
   "status":"",
   "message":"",
   "timeStamp": Date.now(),
-  "portfolioBalance":"",
+  "balance":"",
   "payload":""
  }
  if (obj.payload.length == 0) {
@@ -16,7 +16,7 @@ function resCallBack(obj) {
   resObj.status = "success";
   resObj.message = "success";
   resObj.payload = obj.payload;
-  resObj.portfolioBalance = obj.portfolioBalance;
+  resObj.balance = obj.balance;
   obj.callback.setHeader('Content-Type','application/json; charset=utf-8');
   obj.callback.send(resObj).status(200);
  }
@@ -25,17 +25,17 @@ function resCallBack(obj) {
 function getAccountsCustom (callback) {
  coinbaseCore.getAccounts()
   .then(async (response) => {
-   let portfolioBalance = 0;
+   let balance = 0;
    let processedArray = coinbaseCore.getAccountsPreProcessor(response);
    for (let p = 0; p < processedArray.length; p++) {
     let price = await coinbaseCore.getExchangeRates(processedArray[p].currency.code,'USD').then((response));
     processedArray[p].balance['exchangPrice'] = price;
     processedArray[p].balance['totalValue'] = price * processedArray[p].balance.amount;
-    portfolioBalance += price * processedArray[p].balance.amount;
+    balance += price * processedArray[p].balance.amount;
     if (p == processedArray.length-1) {
      let resCallBackObj = {
       "payload":processedArray,
-      "portfolioBalance":portfolioBalance,
+      "balance":balance,
       "callback":callback,
      };
      return resCallBack(resCallBackObj);

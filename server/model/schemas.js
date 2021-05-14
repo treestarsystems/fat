@@ -14,13 +14,13 @@ const accountSchema = new mongoose.Schema({
  },
  accountType: {
   type: String,
-  match: core.coreRegExs.accountTypeValidaton,
+  match: core.coreRegExs.accountTypeValidation,
   required: true,
   max: 255
  },
  brokerage: {
   type: String,
-  match: core.coreRegExs.brokerageValidaton,
+  match: core.coreRegExs.brokerageValidation,
   min: 3,
   max: 255
  },
@@ -37,6 +37,7 @@ const accountSchema = new mongoose.Schema({
 const accountEntrySchema = new mongoose.Schema({
  accountUUID: {
   type: String,
+  match: core.coreRegExs.accountUUIDValidation,
   required: true
  },
  entryDescription: {
@@ -45,7 +46,7 @@ const accountEntrySchema = new mongoose.Schema({
  },
  entryType: {
   type: String,
-  match: core.coreRegExs.entryTypeValidaton,
+  match: core.coreRegExs.entryTypeValidation,
   required: true,
   max: 255
  },

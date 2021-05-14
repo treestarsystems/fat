@@ -22,12 +22,20 @@ var coreVars = {
  "keys": keys
 };
 
+/*
+ Sources:
+ - https://stackoverflow.com/a/13653180
+*/
+
 var coreRegExs = {
- "accountTypeValidaton":/^retirement$|^generalInvesting$|^crypto$|^debt$|^checking$|^saving$|^creditScore$/,
- "brokerageValidaton":/^m1finance$|^coinbase$|^massmutual$|^brightstarcreditunion$/,
- "entryTypeValidaton":/^update$|^financeTracker$|^bill$/,
- "accessLevelValidaton":/member|admin/
-// "Validaton":,
+ "accountTypeValidation":/^retirement$|^generalInvesting$|^crypto$|^debt$|^checking$|^savings$|^creditScore$/,
+ "brokerageValidation":/^m1finance$|^coinbase$|^massmutual$|^brightstarcreditunion$/,
+ "entryTypeValidation":/^update$|^financeTracker$|^bill$/,
+ "accessLevelValidation":/member|admin/,
+ "accountUUIDValidation":/^A-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+ "entryUUIDValidation":/^E-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+ "userUUIDValidation":/^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/
+// "Validation":,
 };
 
 //Required directories
