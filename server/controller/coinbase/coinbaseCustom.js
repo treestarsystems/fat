@@ -22,29 +22,90 @@ function resCallBack(obj) {
  }
 }
 
-function getAccountsCustom (callback) {
- coinbaseCore.getAccounts()
-  .then(async (response) => {
-   let balance = 0;
-   let processedArray = coinbaseCore.getAccountsPreProcessor(response);
-   for (let p = 0; p < processedArray.length; p++) {
-    let price = await coinbaseCore.getExchangeRates(processedArray[p].currency.code,'USD').then((response));
-    processedArray[p].balance['exchangPrice'] = price;
-    processedArray[p].balance['totalValue'] = price * processedArray[p].balance.amount;
-    balance += price * processedArray[p].balance.amount;
-    if (p == processedArray.length-1) {
+function getAccountsCustomLiveRaw (callback) {
+ try {
+  coinbaseCore.getAccountsRaw()
+   .then(async (response) => {
+    try {
+     let balance = 0;
+     if (!Array.isArray(response)) throw response;
+     let processedArray = response;
      let resCallBackObj = {
-      "payload":processedArray,
+      "payload":[processedArray],
       "balance":balance,
       "callback":callback,
      };
      return resCallBack(resCallBackObj);
+    } catch (err) {
+     let processedError = coinbaseCore.getAccountsErrorProcessor(err);
+     console.log('getAccountsCustomLiveRaw:coinbaseCore.getAccountsRaw:',processedError);
+     let resCallBackObj = {
+      "payload":[processedError],
+      "balance":0,
+      "callback":callback,
+     };
+     return resCallBack(resCallBackObj);
     }
-   }
-  });
+   });
+ } catch (err) {
+  let processedError = coinbaseCore.getAccountsErrorProcessor(err);
+  console.log('getAccountsCustomLiveRaw:',processedError);
+  let resCallBackObj = {
+   "payload":[processedError],
+   "balance":0,
+   "callback":callback,
+  };
+  return resCallBack(resCallBackObj);
+ }
+}
+
+function getAccountsCustomLiveFiltered (callback) {
+ try {
+  coinbaseCore.getAccountsFiltered()
+   .then(async (response) => {
+    try {
+     let balance = 0;
+     if (!Array.isArray(response)) throw response;
+     let processedArray = coinbaseCore.getAccountsPreProcessor(response);
+     for (let p = 0; p < processedArray.length; p++) {
+      let price = await coinbaseCore.getExchangeRates(processedArray[p].currency.code,'USD').then((response));
+      processedArray[p].balance['exchangPrice'] = price;
+      processedArray[p].balance['totalValue'] = price * processedArray[p].balance.amount;
+      balance += price * processedArray[p].balance.amount;
+      if (p == processedArray.length-1) {
+       let resCallBackObj = {
+        "payload":processedArray,
+        "balance":balance,
+        "callback":callback,
+       };
+       return resCallBack(resCallBackObj);
+      }
+     }
+    } catch (err) {
+     let processedError = coinbaseCore.getAccountsErrorProcessor(err);
+     console.log('getAccountsCustomLiveFiltered:coinbaseCore.getAccountsFiltered:',processedError);
+     let resCallBackObj = {
+      "payload":[processedError],
+      "balance":0,
+      "callback":callback,
+     };
+     return resCallBack(resCallBackObj);
+    }
+   });
+ } catch (err) {
+  let processedError = coinbaseCore.getAccountsErrorProcessor(err);
+  console.log('getAccountsCustomLiveFiltered:',processedError);
+  let resCallBackObj = {
+   "payload":[processedError],
+   "balance":0,
+   "callback":callback,
+  };
+  return resCallBack(resCallBackObj);
+ }
 }
 
 module.exports = {
  resCallBack,
- getAccountsCustom
+ getAccountsCustomLiveRaw,
+ getAccountsCustomLiveFiltered
 }

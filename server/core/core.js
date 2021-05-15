@@ -14,6 +14,8 @@ var coreVars = {
  "installedDir": path.join(__dirname, '../..'),
  "projectName": "fat",
  "dbServer": "mongodb://localhost:2702/fat?tls=true&tlsAllowInvalidCertificates=true",
+ "cbApiUrl":"https://apis.coinbase.com/v2",
+ "cbApiVersion":"2019-11-15",
  "dbName": "fat",
  "dbAccountCollection":"accountData",
  "dbAccountEntryCollection":"accountEntryData",

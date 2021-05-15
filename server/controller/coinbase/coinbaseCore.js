@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 const axios = require('axios');
 const core = require('../../core/core.js');
-const cbApiVersion = '2019-11-15';
 
 function generateCBAccessSign (method,endpoint,body) {
  let timeStamp = Math.floor(Date.now() / 1000);
@@ -14,12 +13,12 @@ function generateCBAccessSign (method,endpoint,body) {
 async function getExchangeRates (coinSymbol,fiatCurrency) {
  let sign = generateCBAccessSign('GET','/v2/exchange-rates','');
  try {
-  let response = await axios.get(`https://api.coinbase.com/v2/exchange-rates?currency=${coinSymbol}`, {
+  let response = await axios.get(`${core.coreVars.cbApiUrl}/exchange-rates?currency=${coinSymbol}`, {
    headers: {
    'CB-ACCESS-KEY': core.coreVars.keys.coinbaseApiKey,
    'CB-ACCESS-SIGN': sign.cbAccessSign,
    'CB-ACCESS-TIMESTAMP': sign.timeStamp,
-   'CB-VERSION': cbApiVersion
+   'CB-VERSION': core.coreVars.cbApiVersion
    }
   })
    .then((response) => {
@@ -36,20 +35,43 @@ async function getExchangeRates (coinSymbol,fiatCurrency) {
    });
   return response;
  } catch (err) {
+//  console.log('getExchangeRates:',err);
+  return err;
+ }
+}
+
+async function getAccountsRaw () {
+ let sign = generateCBAccessSign('GET','/v2/accounts','');
+ try {
+  let response = await axios.get(`${core.coreVars.cbApiUrl}/accounts`, {
+   headers: {
+   'CB-ACCESS-KEY': core.coreVars.keys.coinbaseApiKey,
+   'CB-ACCESS-SIGN': sign.cbAccessSign,
+   'CB-ACCESS-TIMESTAMP': sign.timeStamp,
+   'CB-VERSION': core.coreVars.cbApiVersion
+   }
+  })
+   .then((response) => {
+    let data = response.data;
+    return data;
+   });
+  return response;
+ } catch (err) {
+//  console.log('getAccountsRaw:',err);
   return err;
  }
 }
 
 //Only shows accounts that have a positive balance.
-async function getAccounts () {
+async function getAccountsFiltered () {
  let sign = generateCBAccessSign('GET','/v2/accounts','');
  try {
-  let response = await axios.get('https://api.coinbase.com/v2/accounts', {
+  let response = await axios.get(`${core.coreVars.cbApiUrl}/accounts`, {
    headers: {
    'CB-ACCESS-KEY': core.coreVars.keys.coinbaseApiKey,
    'CB-ACCESS-SIGN': sign.cbAccessSign,
    'CB-ACCESS-TIMESTAMP': sign.timeStamp,
-   'CB-VERSION': cbApiVersion
+   'CB-VERSION': core.coreVars.cbApiVersion
    }
   })
    .then((response) => {
@@ -59,6 +81,7 @@ async function getAccounts () {
    });
   return response;
  } catch (err) {
+//  console.log('getAccountsFiltered:',err);
   return err;
  }
 }
@@ -74,9 +97,17 @@ function getAccountsPreProcessor (accountsArray) {
  }
 }
 
+function getAccountsErrorProcessor (errorObj) {
+ delete errorObj.config.headers['CB-ACCESS-KEY'];
+ delete errorObj.config.headers['CB-ACCESS-SIGN'];
+ return errorObj;
+}
+
 module.exports = {
  generateCBAccessSign,
  getExchangeRates,
- getAccounts,
- getAccountsPreProcessor
+ getAccountsRaw,
+ getAccountsFiltered,
+ getAccountsPreProcessor,
+ getAccountsErrorProcessor
 }

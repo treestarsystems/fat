@@ -24,7 +24,7 @@ router.post('/account', async (req, res) => {
   if (accountExists) return res.status(400).send({"status":"failure","timeStamp": Date.now(),"message":"Matching Account Already Exists"});
   //Define object to be saved.
   const accountObj = new Account({
-   accountName: obj.accountName,
+   accountName: obj.accountName.toUpperCase(),
    accountType: obj.accountType,
    brokerage: obj.brokerage
   });
