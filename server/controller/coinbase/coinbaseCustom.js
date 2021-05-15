@@ -28,7 +28,8 @@ function getAccountsCustomLiveRaw (callback) {
    .then(async (response) => {
     try {
      let balance = 0;
-     if (!Array.isArray(response)) throw response;
+     //Check response's validity
+     if (!response.pagination) throw response;
      let processedArray = response;
      let resCallBackObj = {
       "payload":[processedArray],
@@ -65,6 +66,7 @@ function getAccountsCustomLiveFiltered (callback) {
    .then(async (response) => {
     try {
      let balance = 0;
+     //Check response's validity
      if (!Array.isArray(response)) throw response;
      let processedArray = coinbaseCore.getAccountsPreProcessor(response);
      for (let p = 0; p < processedArray.length; p++) {
