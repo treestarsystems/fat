@@ -42,7 +42,7 @@ router.get('/account/:userInput', async (req, res) => {
   I need to finish other endpoints before refining this one.
  */
  let paramsVar = req.params.userInput;
- await getAccountsResponse ('all','',res);
+ await getAccountsResponse (paramsVar,'',res);
 });
 
 router.get('/account/type/:userInput', async (req, res) => {
@@ -115,47 +115,13 @@ async function getEntriesResponse (reqParamsString,reqParamsVariable,callback) {
 }
 
 router.get('/entry/:userInput', async (req, res) => {
- await getEntriesResponse ('all','',res);
-/*
- try {
-  //Check if entries exists
-  const getEntryResult = await Entry.find({},{_id:0,__v:0});
-  if (!getEntryResult) return res.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
-  if (getEntryResult.length == 0) return res.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
-  const getEntryResultCount = await Entry.countDocuments({}, (err, count) => {
-   if (err) return err;
-   return count;
-  });
-  res.status(200).send({
-   "status":"success",
-   "message":"success",
-   "timeStamp":Date.now(),
-   "balance":0,
-   "payload":getEntryResult
-  });
- } catch (err) {
-  console.log('/entry/all:', err)
-  res.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
- }
-*/
+ let paramsVar = req.params.userInput;
+ await getEntriesResponse (paramsVar,'',res);
 });
 
 router.get('/entry/uuid/:userInput', async (req, res) => {
  let paramsVar = req.params.userInput;
  await getEntriesResponse ('entryUUID',paramsVar,res);
-/*
- try {
-  let entryUUID = req.params.entryUUID;
-  //Check if entryUUID exists
-  const getEntryResult = await Entry.find({entryUUID: entryUUID},{_id:0,__v:0});
-  if (!getEntryResult) return res.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
-  if (getEntryResult.length == 0) return res.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
-  res.status(200).send({"status":"success","message":"success","timeStamp":Date.now(),"payload":getEntryResult});
- } catch (err) {
-  console.log('/entry/uuid/:entryUUID:', err)
-  res.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
- }
-*/
 });
 
 router.get('/entry/accountuuid/:userInput', async (req, res) => {
