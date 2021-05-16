@@ -2,19 +2,17 @@ const coinbaseCore = require('./coinbaseCore.js');
 
 function resCallBack(obj) {
  let resObj = {
-  "status":"",
-  "message":"",
+  "status":obj.status,
+  "message":obj.message,
   "timeStamp": Date.now(),
   "balance":"",
   "payload":""
  }
  if (obj.payload.length == 0) {
   resObj.status = "failure";
-  resObj.message = "Empty Array Returned";
+  resObj.message = "Error: Empty Array Returned";
   res.send(resObj).status(204);
  } else {
-  resObj.status = "success";
-  resObj.message = "success";
   resObj.payload = obj.payload;
   resObj.balance = obj.balance;
   obj.callback.setHeader('Content-Type','application/json; charset=utf-8');
@@ -32,6 +30,8 @@ function getAccountsCustomLiveRaw (callback) {
      if (!response.pagination) throw response;
      let processedArray = response;
      let resCallBackObj = {
+      "status":"success",
+      "message":"success",
       "payload":[processedArray],
       "balance":balance,
       "callback":callback,
@@ -41,6 +41,8 @@ function getAccountsCustomLiveRaw (callback) {
      let processedError = coinbaseCore.getAccountsErrorProcessor(err);
      console.log('getAccountsCustomLiveRaw:coinbaseCore.getAccountsRaw:',processedError);
      let resCallBackObj = {
+      "status":"failure",
+      "message":"Error: See Payload",
       "payload":[processedError],
       "balance":0,
       "callback":callback,
@@ -52,6 +54,8 @@ function getAccountsCustomLiveRaw (callback) {
   let processedError = coinbaseCore.getAccountsErrorProcessor(err);
   console.log('getAccountsCustomLiveRaw:',processedError);
   let resCallBackObj = {
+   "status":"failure",
+   "message":"Error: See Payload",
    "payload":[processedError],
    "balance":0,
    "callback":callback,
@@ -76,6 +80,8 @@ function getAccountsCustomLiveFiltered (callback) {
       balance += price * processedArray[p].balance.amount;
       if (p == processedArray.length-1) {
        let resCallBackObj = {
+        "status":"success",
+        "message":"success",
         "payload":processedArray,
         "balance":balance,
         "callback":callback,
@@ -87,6 +93,8 @@ function getAccountsCustomLiveFiltered (callback) {
      let processedError = coinbaseCore.getAccountsErrorProcessor(err);
      console.log('getAccountsCustomLiveFiltered:coinbaseCore.getAccountsFiltered:',processedError);
      let resCallBackObj = {
+      "status":"failure",
+      "message":"Error: See Payload",
       "payload":[processedError],
       "balance":0,
       "callback":callback,
@@ -98,6 +106,8 @@ function getAccountsCustomLiveFiltered (callback) {
   let processedError = coinbaseCore.getAccountsErrorProcessor(err);
   console.log('getAccountsCustomLiveFiltered:',processedError);
   let resCallBackObj = {
+   "status":"failure",
+   "message":"Error: See Payload",
    "payload":[processedError],
    "balance":0,
    "callback":callback,

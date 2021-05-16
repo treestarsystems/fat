@@ -30,9 +30,9 @@ var coreVars = {
 */
 
 var coreRegExs = {
- "accountTypeValidation":/^retirement$|^generalInvesting$|^crypto$|^debt$|^checking$|^savings$|^creditScore$/,
- "brokerageValidation":/^m1finance$|^coinbase$|^massmutual$|^brightstarcreditunion$/,
- "entryTypeValidation":/^update$|^financeTracker$|^bill$/,
+ "accountTypeValidation":/^retirement$|^generalinvesting$|^crypto$|^debt$|^checking$|^savings$|^creditscore$/,
+ "institutionValidation":/^m1finance$|^coinbase$|^massmutual$|^brightstarcreditunion$/,
+ "entryTypeValidation":/^update$|^financetracker$|^bill$/,
  "accessLevelValidation":/member|admin/,
  "accountUUIDValidation":/^A-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,
  "entryUUIDValidation":/^E-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,

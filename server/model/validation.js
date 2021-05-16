@@ -14,10 +14,10 @@ const accountValidation = joi.object({
   .pattern(core.coreRegExs.accountTypeValidation)
   .message("\"Account Type\" selection is invalid")
   .required(),
- brokerage: joi.string()
-  .label('Brokerage')
-  .pattern(core.coreRegExs.brokerageValidation)
-  .message("\"Brokerage\" selection is invalid")
+ institution: joi.string()
+  .label('Institution')
+  .pattern(core.coreRegExs.institutionValidation)
+  .message("\"Institution\" selection is invalid")
   .required()
 });
 

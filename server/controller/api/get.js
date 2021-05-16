@@ -7,125 +7,62 @@ const Account = require('../../model/schemas').accountModel;
 const Entry = require('../../model/schemas').accountEntryModel;
 const coinbaseCustom = require('../coinbase/coinbaseCustom.js');
 
-/*
- This needs a lot of work if it is supposed to show all accounts.
- I need to finish other endpoints before refining this one.
-*/
-
 //Account Endpoints
-router.get('/account/all', async (req, res) => {
+async function getAccountsResponse (reqParamsString,reqParamsVariable,callback) {
+ let queryObj = {};
+ if (reqParamsString != 'all') queryObj[`${reqParamsString}`] = reqParamsVariable;
  try {
-  //Check if account exists
-  const getAccountResult = await Account.find({},{_id:0,__v:0});
-  if (!getAccountResult) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","payload":[]});
-  if (getAccountResult.length == 0) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","payload":[]});
-  res.status(200).send({
-   "status":"success",
-   "message":"See Payload",
-   "timeStamp":Date.now(),
-   "balance":0,
-   "payload":getAccountResult
-  });
- } catch (err) {
-  console.log('/account/all:',err)
-  res.status(400).send({"status":"failure","message":err,"timeStamp":Date.now(),"payload":[]});
- }
-});
-
-router.get('/account/type/:accountType', async (req, res) => {
- try {
-  let accountType = req.params.accountType;
   //Check if accountType exists
-  const getAccountResult = await Account.find({accountType: accountType},{_id:0,__v:0});
-  if (!getAccountResult) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
-  if (getAccountResult.length == 0) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
-  const getAccountResultCount = await Account.countDocuments({accountType: accountType}, (err, count) => {
-   if (err) return err;
-   return count;
-  });
-  res.status(200).send({
+  const getAccountResult = await Account.find(queryObj,{_id:0,__v:0});
+  if (!getAccountResult) return callback.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
+  if (getAccountResult.length == 0) return callback.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
+  let getAccountResultCount = 0;
+  if (reqParamsString != 'all') {
+   getAccountResultCount = await Account.countDocuments(queryObj, (err, count) => {
+    if (err) return err;
+    return count;
+   });
+  }
+  callback.status(200).send({
    "status":"success",
-   "message":"See Payload",
+   "message":"success",
    "timeStamp":Date.now(),
    "totalRecords":getAccountResultCount,
    "payload":getAccountResult
   });
  } catch (err) {
-  console.log('/account/type/:accountType:',err)
-  res.status(400).send({"status":"failure","message":err,"timeStamp":Date.now(),"payload":[]});
+  console.log(`get:account:${reqParamsString}:`,err)
+  callback.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
+}
+
+router.get('/account/:userInput', async (req, res) => {
+ /*
+  This needs a lot of work if it is supposed to show all accounts.
+  I need to finish other endpoints before refining this one.
+ */
+ let paramsVar = req.params.userInput;
+ await getAccountsResponse ('all','',res);
 });
 
-router.get('/account/institution/:institution', async (req, res) => {
- try {
-  let institution = req.params.institution;
-  //Check if institution exists
-  const getAccountResult = await Account.find({institution: institution},{_id:0,__v:0});
-  if (!getAccountResult) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
-  if (getAccountResult.length == 0) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
-  const getAccountResultCount = await Account.countDocuments({institution: institution}, (err, count) => {
-   if (err) return err;
-   return count;
-  });
-  res.status(200).send({
-   "status":"success",
-   "message":"See Payload",
-   "timeStamp":Date.now(),
-   "totalRecords":getAccountResultCount,
-   "payload":getAccountResult,
-  });
- } catch (err) {
-  console.log('/account/institution/:institution:',err)
-  res.status(400).send({"status":"failure","message":err,"timeStamp":Date.now(),"payload":[]});
- }
+router.get('/account/type/:userInput', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await getAccountsResponse ('accountType',paramsVar,res);
 });
 
-router.get('/account/uuid/:accountUUID', async (req, res) => {
- try {
-  let accountUUID = req.params.accountUUID;
-  //Check if accountUUID exists
-  const getAccountResult = await Account.find({accountUUID: accountUUID},{_id:0,__v:0});
-  if (!getAccountResult) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
-  if (getAccountResult.length == 0) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
-  const getAccountResultCount = await Account.countDocuments({accountUUID: accountUUID}, (err, count) => {
-   if (err) return err;
-   return count;
-  });
-  res.status(200).send({
-   "status":"success",
-   "message":"See Payload",
-   "timeStamp":Date.now(),
-   "totalRecords":getAccountResultCount,
-   "payload":getAccountResult
-  });
- } catch (err) {
-  console.log('/account/uuid/:accountUUID:',err)
-  res.status(400).send({"status":"failure","message":err,"timeStamp":Date.now(),"payload":[]});
- }
+router.get('/account/institution/:userInput', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await getAccountsResponse ('institution',paramsVar,res);
 });
 
-router.get('/account/name/:accountName', async (req, res) => {
- try {
-  let accountName = req.params.accountName.toUpperCase();
-  //Check if accountName exists
-  const getAccountResult = await Account.find({accountName: accountName},{_id:0,__v:0});
-  if (!getAccountResult) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
-  if (getAccountResult.length == 0) return res.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
-  const getAccountResultCount = await Account.countDocuments({accountName: accountName}, (err, count) => {
-   if (err) return err;
-   return count;
-  });
-  res.status(200).send({
-   "status":"success",
-   "message":"See Payload",
-   "timeStamp":Date.now(),
-   "totalRecords":getAccountResultCount,
-   "payload":getAccountResult
-  });
- } catch (err) {
-  console.log('/account/name/:accountName:',err)
-  res.status(400).send({"status":"failure","message":err,"timeStamp":Date.now(),"payload":[]});
- }
+router.get('/account/uuid/:userInput', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await getAccountsResponse ('accountUUID',paramsVar,res);
+});
+
+router.get('/account/name/:userInput', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await getAccountsResponse ('accountName',paramsVar,res);
 });
 
 //Coinbase Endpoints
@@ -134,7 +71,7 @@ router.get('/coinbase/raw', (req, res) => {
   coinbaseCustom.getAccountsCustomLiveRaw(res);
  } catch (err) {
   console.log('/coinbase/raw:',err)
-  res.status(400).send({"status":"failure","message":err,"timeStamp":Date.now(),"payload":[]});
+  res.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
 });
 
@@ -143,12 +80,43 @@ router.get('/coinbase/filtered', (req, res) => {
   coinbaseCustom.getAccountsCustomLiveFiltered(res);
  } catch (err) {
   console.log('/coinbase/filtered:',err)
-  res.status(400).send({"status":"failure","message":err,"timeStamp":Date.now(),"payload":[]});
+  res.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
 });
 
 //Entry Endpoints
-router.get('/entry/all', async (req, res) => {
+async function getEntriesResponse (reqParamsString,reqParamsVariable,callback) {
+ let queryObj = {};
+ if (reqParamsString != 'all') queryObj[`${reqParamsString}`] = reqParamsVariable;
+ try {
+  //Check if entries exists
+  const getEntryResult = await Entry.find(queryObj,{_id:0,__v:0});
+  if (!getEntryResult) return callback.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
+  if (getEntryResult.length == 0) return callback.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
+  let getEntryResultCount = 0;
+  if (reqParamsString != 'all') {
+   getEntryResultCount = await Entry.countDocuments(queryObj, (err, count) => {
+    if (err) return err;
+    return count;
+   });
+  }
+  callback.status(200).send({
+   "status":"success",
+   "message":"success",
+   "timeStamp":Date.now(),
+   "totalRecords":getEntryResultCount,
+   "balance":0,
+   "payload":getEntryResult
+  });
+ } catch (err) {
+  console.log(`get:entry:${reqParamsString}`, err)
+  callback.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
+ }
+}
+
+router.get('/entry/:userInput', async (req, res) => {
+ await getEntriesResponse ('all','',res);
+/*
  try {
   //Check if entries exists
   const getEntryResult = await Entry.find({},{_id:0,__v:0});
@@ -160,29 +128,44 @@ router.get('/entry/all', async (req, res) => {
   });
   res.status(200).send({
    "status":"success",
-   "message":"See Payload",
+   "message":"success",
    "timeStamp":Date.now(),
    "balance":0,
    "payload":getEntryResult
   });
  } catch (err) {
   console.log('/entry/all:', err)
-  res.status(400).send({"status":"failure","message":err,"timeStamp":Date.now(),"payload":[]});
+  res.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
+*/
 });
 
-router.get('/entry/uuid/:entryUUID', async (req, res) => {
+router.get('/entry/uuid/:userInput', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await getEntriesResponse ('entryUUID',paramsVar,res);
+/*
  try {
   let entryUUID = req.params.entryUUID;
   //Check if entryUUID exists
   const getEntryResult = await Entry.find({entryUUID: entryUUID},{_id:0,__v:0});
   if (!getEntryResult) return res.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
   if (getEntryResult.length == 0) return res.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
-  res.status(200).send({"status":"success","message":"See Payload","timeStamp":Date.now(),"payload":getEntryResult});
+  res.status(200).send({"status":"success","message":"success","timeStamp":Date.now(),"payload":getEntryResult});
  } catch (err) {
   console.log('/entry/uuid/:entryUUID:', err)
-  res.status(400).send({"status":"failure","message":err,"timeStamp":Date.now(),"payload":[]});
+  res.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
+*/
+});
+
+router.get('/entry/accountuuid/:userInput', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await getEntriesResponse ('accountUUID',paramsVar,res);
+});
+
+router.get('/entry/type/:userInput', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await getEntriesResponse ('entryType',paramsVar,res);
 });
 
 module.exports = router;

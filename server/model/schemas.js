@@ -18,9 +18,9 @@ const accountSchema = new mongoose.Schema({
   required: true,
   max: 255
  },
- brokerage: {
+ institution: {
   type: String,
-  match: core.coreRegExs.brokerageValidation,
+  match: core.coreRegExs.institutionValidation,
   min: 3,
   max: 255
  },
