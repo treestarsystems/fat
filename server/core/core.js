@@ -29,18 +29,67 @@ var fatVars = {
  "accountTypeList":["retirement","generalinvesting","crypto","debt","checking","savings","creditscore"],
  "institutionList":["m1finance","coinbase","massmutual","brightstarcreditunion"],
  "entryTypeList":["update","financetracker","bill"],
- "accessLevelList":["member","admin"],
+ "accessLevelList":["member","admin"]
 }
 
-//Convert your lists into regular expressions
+//Convert your lists to regExs
 function createValidationRegExs () {
+ let validationObj = {};
+ let result = '';
+ for (let key in fatVars) {
+  for (let i = 0; i < fatVars[key].length; i++) {
+   if (i == 0) result = '/';
+   result += `^${fatVars[key][i]}$`;
+   if (fatVars[key].length-1 != i) result += '|';
+   if (fatVars[key].length-1 == i) {
+    result += '/';
+    validationObj[`${key.replace('List','Validation')}`] = RegExp(result);
+   }
+  }
+ }
+ return validationObj;
+}
+
+//Assign regExs to the coreRegExs obj for use in model/schema.js and model/validation.js files
+var coreRegExs = () => {
+ let obj = {};
+ let validationRegExs = createValidationRegExs();
+ for (let key in validationRegExs) {
+  obj[key] = validationRegExs[key];
+ }
+ obj["accountUUIDValidation"] = /^A-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+ obj["entryUUIDValidation"] = /^E-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+ obj["userUUIDValidation"] = /^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+ return obj;
+};
+
+/*
+ From a static obj that doesnt expand.
+ to 58 lines that are a bit more dynamic but require you to make changes.
+ to 28 lines fully of dynamic code that expand based on the keys in the the fatVars obj.
+*/
+
+/*
+//Original obj
+var coreRegExsTest = {
+ "accountTypeValidation":/^retirement$|^generalinvesting$|^crypto$|^debt$|^checking$|^savings$|^creditscore$/,
+ "institutionValidation":/^m1finance$|^coinbase$|^massmutual$|^brightstarcreditunion$/,
+ "entryTypeValidation":/^update$|^financetracker$|^bill$/,
+ "accessLevelValidation":/^member$|^admin$/,
+ "accountUUIDValidation":/^A-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+ "entryUUIDValidation":/^E-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+ "userUUIDValidation":/^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/
+// "Validation":,
+};
+
+//Initial funtion to convert your lists into regular expressions
+function createValidationRegExsOld () {
  let validationObj = {
   "accountTypeValidation":"",
   "institutionValidation":"",
   "entryTypeValidation":"",
   "accessLevelValidation":""
  };
- let result = '';
  for (let i = 0; i < fatVars.accountTypeList.length; i++) {
   if (i == 0) result = '/';
   result += `^${fatVars.accountTypeList[i]}$`;
@@ -80,11 +129,10 @@ function createValidationRegExs () {
  return validationObj;
 }
 
-//console.log(createValidationRegExs());
-
-//var test = () => {
+//Using converted lists in obj
 var coreRegExs = () => {
  let obj = {};
+ let validationRegExs = createValidationRegExs();
  obj["accountTypeValidation"] = createValidationRegExs().accountTypeValidation;
  obj["institutionValidation"] = createValidationRegExs().institutionValidation;
  obj["entryTypeValidation"] = createValidationRegExs().entryTypeValidation;
@@ -94,21 +142,7 @@ var coreRegExs = () => {
  obj["userUUIDValidation"] = /^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
  return obj;
 };
-
-/*
-console.log(test());
 */
-
-var coreRegExsTest = {
- "accountTypeValidation":/^retirement$|^generalinvesting$|^crypto$|^debt$|^checking$|^savings$|^creditscore$/,
- "institutionValidation":/^m1finance$|^coinbase$|^massmutual$|^brightstarcreditunion$/,
- "entryTypeValidation":/^update$|^financetracker$|^bill$/,
- "accessLevelValidation":/^member$|^admin$/,
- "accountUUIDValidation":/^A-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,
- "entryUUIDValidation":/^E-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,
- "userUUIDValidation":/^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/
-// "Validation":,
-};
 
 //Required directories
 coreVars.systemConfsDir = `${coreVars.installedDir}/system_confs`;
@@ -240,7 +274,6 @@ module.exports = {
  incorrectUser,
  coreVars,
  coreRegExs,
- coreRegExsTest,
  system,
  genSpecialOnly,
  randomCaps,
