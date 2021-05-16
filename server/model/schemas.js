@@ -14,13 +14,13 @@ const accountSchema = new mongoose.Schema({
  },
  accountType: {
   type: String,
-  match: core.coreRegExs.accountTypeValidation,
+  match: core.coreRegExs().accountTypeValidation,
   required: true,
   max: 255
  },
  institution: {
   type: String,
-  match: core.coreRegExs.institutionValidation,
+  match: core.coreRegExs().institutionValidation,
   min: 3,
   max: 255
  },
@@ -37,7 +37,7 @@ const accountSchema = new mongoose.Schema({
 const accountEntrySchema = new mongoose.Schema({
  accountUUID: {
   type: String,
-  match: core.coreRegExs.accountUUIDValidation,
+  match: core.coreRegExs().accountUUIDValidation,
   required: true
  },
  entryDescription: {
@@ -46,7 +46,7 @@ const accountEntrySchema = new mongoose.Schema({
  },
  entryType: {
   type: String,
-  match: core.coreRegExs.entryTypeValidation,
+  match: core.coreRegExs().entryTypeValidation,
   required: true,
   max: 255
  },

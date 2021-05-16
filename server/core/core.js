@@ -24,16 +24,86 @@ var coreVars = {
  "keys": keys
 };
 
+//Define your lists here
+var fatVars = {
+ "accountTypeList":["retirement","generalinvesting","crypto","debt","checking","savings","creditscore"],
+ "institutionList":["m1finance","coinbase","massmutual","brightstarcreditunion"],
+ "entryTypeList":["update","financetracker","bill"],
+ "accessLevelList":["member","admin"],
+}
+
+//Convert your lists into regular expressions
+function createValidationRegExs () {
+ let validationObj = {
+  "accountTypeValidation":"",
+  "institutionValidation":"",
+  "entryTypeValidation":"",
+  "accessLevelValidation":""
+ };
+ let result = '';
+ for (let i = 0; i < fatVars.accountTypeList.length; i++) {
+  if (i == 0) result = '/';
+  result += `^${fatVars.accountTypeList[i]}$`;
+  if (fatVars.accountTypeList.length-1 != i) result += '|';
+  if (fatVars.accountTypeList.length-1 == i) {
+   result += '/';
+   validationObj.accountTypeValidation = RegExp(result);
+  }
+ }
+ for (let i = 0; i < fatVars.institutionList.length; i++) {
+  if (i == 0) result = '/';
+  result += `^${fatVars.institutionList[i]}$`;
+  if (fatVars.institutionList.length-1 != i) result += '|';
+  if (fatVars.institutionList.length-1 == i) {
+   result += '/';
+   validationObj.institutionValidation = RegExp(result);
+  }
+ }
+ for (let i = 0; i < fatVars.entryTypeList.length; i++) {
+  if (i == 0) result = '/';
+  result += `^${fatVars.entryTypeList[i]}$`;
+  if (fatVars.entryTypeList.length-1 != i) result += '|';
+  if (fatVars.entryTypeList.length-1 == i) {
+   result += '/';
+   validationObj.entryTypeValidation = RegExp(result);
+  }
+ }
+ for (let i = 0; i < fatVars.accessLevelList.length; i++) {
+  if (i == 0) result = '/';
+  result += `^${fatVars.accessLevelList[i]}$`;
+  if (fatVars.accessLevelList.length-1 != i) result += '|';
+  if (fatVars.accessLevelList.length-1 == i) {
+   result += '/';
+   validationObj.accessLevelValidation = RegExp(result);
+  }
+ }
+ return validationObj;
+}
+
+//console.log(createValidationRegExs());
+
+//var test = () => {
+var coreRegExs = () => {
+ let obj = {};
+ obj["accountTypeValidation"] = createValidationRegExs().accountTypeValidation;
+ obj["institutionValidation"] = createValidationRegExs().institutionValidation;
+ obj["entryTypeValidation"] = createValidationRegExs().entryTypeValidation;
+ obj["accessLevelValidation"] = createValidationRegExs().accessLevelValidation;
+ obj["accountUUIDValidation"] = /^A-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+ obj["entryUUIDValidation"] = /^E-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+ obj["userUUIDValidation"] = /^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+ return obj;
+};
+
 /*
- Sources:
- - https://stackoverflow.com/a/13653180
+console.log(test());
 */
 
-var coreRegExs = {
+var coreRegExsTest = {
  "accountTypeValidation":/^retirement$|^generalinvesting$|^crypto$|^debt$|^checking$|^savings$|^creditscore$/,
  "institutionValidation":/^m1finance$|^coinbase$|^massmutual$|^brightstarcreditunion$/,
  "entryTypeValidation":/^update$|^financetracker$|^bill$/,
- "accessLevelValidation":/member|admin/,
+ "accessLevelValidation":/^member$|^admin$/,
  "accountUUIDValidation":/^A-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,
  "entryUUIDValidation":/^E-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/,
  "userUUIDValidation":/^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/
@@ -170,6 +240,7 @@ module.exports = {
  incorrectUser,
  coreVars,
  coreRegExs,
+ coreRegExsTest,
  system,
  genSpecialOnly,
  randomCaps,

@@ -11,12 +11,12 @@ const accountValidation = joi.object({
   .required(),
  accountType: joi.string()
   .label('Account Type')
-  .pattern(core.coreRegExs.accountTypeValidation)
+  .pattern(core.coreRegExs().accountTypeValidation)
   .message("\"Account Type\" selection is invalid")
   .required(),
  institution: joi.string()
   .label('Institution')
-  .pattern(core.coreRegExs.institutionValidation)
+  .pattern(core.coreRegExs().institutionValidation)
   .message("\"Institution\" selection is invalid")
   .required()
 });
@@ -24,7 +24,7 @@ const accountValidation = joi.object({
 const accountEntryValidation = joi.object({
  accountUUID: joi.string()
   .label('Account UUID')
-  .pattern(core.coreRegExs.accountUUIDValidation)
+  .pattern(core.coreRegExs().accountUUIDValidation)
   .message("\"Account UUID\" is invalid")
   .required(),
  entryDescription: joi.string()
@@ -33,7 +33,7 @@ const accountEntryValidation = joi.object({
   .message("\"Description\" must be less than 255 characters"),
  entryType: joi.string()
   .label('Entry Type')
-  .pattern(core.coreRegExs.entryTypeValidation)
+  .pattern(core.coreRegExs().entryTypeValidation)
   .message("\"Entry Type\" is invalid")
   .required(),
  balance: joi.number()
@@ -58,7 +58,7 @@ const registerValidation = joi.object({
  accessLevel: joi.string()
   .required(6)
   .label('Access Level')
-  .pattern(core.coreRegExs.accessLevelValidation)
+  .pattern(core.coreRegExs().accessLevelValidation)
   .message("\"Access Level\" selection is invalid"),
  password: joi.string()
   .min(6)
