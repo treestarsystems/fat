@@ -9,6 +9,8 @@ const accountValidation = joi.object({
   .max(255)
   .label('Account Name')
   .required(),
+ accountDescription: joi.string()
+  .label('Account Description'),
  accountType: joi.string()
   .label('Account Type')
   .pattern(core.coreRegExs().accountTypeValidation)

@@ -1,4 +1,5 @@
 //Destination: server/controller
+const core = require('../core/core.js');
 
 //API Endpoints
 const add = require('./api/add');
@@ -15,8 +16,11 @@ function apiEndpoint (app) {
 
 function pagesEndpoint (app) {
  //Pages
+// app.get('/', core.ensureAuthenticated, (req, res) => {
+ app.get('/', (req, res) => {
+  res.render('dashboard', {title: 'Dashboard', layout: 'admin'});
+ });
 
-/*
  //User Pages
  app.get('/login', core.forwardAuthenticated, (req, res) => {
   res.render('user/login', {title: 'Login', layout: 'login'});
@@ -24,15 +28,16 @@ function pagesEndpoint (app) {
  app.get('/register', (req, res) => {
   res.render('user/register', {title: 'Register', layout: 'login'});
  });
+ app.get('/logout', (req,res) => {
+  req.logout();
+  res.redirect('/login');
+ });
+/*
  app.get('/profile', (req, res) => {
   res.render('user/profile', {title: 'Profile', layout: 'login'});
  });
  app.get('/password-reset', (req, res) => {
   res.render('user/password-reset', {title: 'Password Reset', layout: 'login'});
- });
- app.get('/logout', (req,res) => {
-  req.logout();
-  res.redirect('/login');
  });
 */
 }

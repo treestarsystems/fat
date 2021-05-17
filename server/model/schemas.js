@@ -26,7 +26,22 @@ const accountSchema = new mongoose.Schema({
  },
  accountUUID: {
   type: String,
-  default: `A-${core.uuidv4()}`
+  default: `A-${core.uuidv4()}_${Date.now()}`
+ },
+ timeStamp: {
+  type: Number,
+  default: Date.now()
+ }
+});
+
+const listEntrySchema = new mongoose.Schema({
+ listName: {
+  type: String,
+  required: true
+ },
+ list: {
+  type: Array,
+  required: true
  },
  timeStamp: {
   type: Number,
@@ -56,7 +71,7 @@ const accountEntrySchema = new mongoose.Schema({
  },
  entryUUID: {
   type: String,
-  default: `E-${core.uuidv4()}`
+  default: `E-${core.uuidv4()}_${Date.now()}`
  },
  timeStamp: {
   type: Number,
@@ -89,7 +104,7 @@ const userSchema = new mongoose.Schema({
  },
  userUUID: {
   type: String,
-  default: `U-${core.uuidv4()}`,
+  default: `U-${core.uuidv4()}_${Date.now()}`,
   required: true
  },
  hash: {
@@ -108,10 +123,12 @@ const userSchema = new mongoose.Schema({
 
 let accountModel = mongoose.model(core.coreVars.dbAccountCollection,accountSchema,core.coreVars.dbAccountCollection);
 let accountEntryModel = mongoose.model(core.coreVars.dbAccountEntryCollection,accountEntrySchema,core.coreVars.dbAccountEntryCollection);
+let listEntryModel = mongoose.model(core.coreVars.dbListEntryCollection,listEntrySchema,core.coreVars.dbListEntryCollection);
 let userModel = mongoose.model(core.coreVars.dbUserCollection,userSchema,core.coreVars.dbUserCollection);
 
 module.exports = {
  accountModel,
  accountEntryModel,
+ listEntryModel,
  userModel
 }

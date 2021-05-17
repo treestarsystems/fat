@@ -19,6 +19,7 @@ var coreVars = {
  "dbName": "fat",
  "dbAccountCollection":"accountData",
  "dbAccountEntryCollection":"accountEntryData",
+ "dbListEntryCollection":"listEntryData",
  "dbUserCollection":"userData",
  "dbSessionsColleciton":"sessionData",
  "keys": keys
@@ -35,14 +36,12 @@ var fatVars = {
 //Convert your lists to regExs
 function createValidationRegExs () {
  let validationObj = {};
- let result = '';
  for (let key in fatVars) {
+  let result = '';
   for (let i = 0; i < fatVars[key].length; i++) {
-   if (i == 0) result = '/';
    result += `^${fatVars[key][i]}$`;
    if (fatVars[key].length-1 != i) result += '|';
    if (fatVars[key].length-1 == i) {
-    result += '/';
     validationObj[`${key.replace('List','Validation')}`] = RegExp(result);
    }
   }
@@ -57,9 +56,10 @@ var coreRegExs = () => {
  for (let key in validationRegExs) {
   obj[key] = validationRegExs[key];
  }
- obj["accountUUIDValidation"] = /^A-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
- obj["entryUUIDValidation"] = /^E-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
- obj["userUUIDValidation"] = /^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+ obj["accountUUIDValidation"] = /^A-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}_[0-9]{10,20}$/;
+ obj["entryUUIDValidation"] = /^E-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}_[0-9]{10,20}$/;
+ obj["listUUIDValidation"] = /^L-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}_[0-9]{10,20}$/;
+ obj["userUUIDValidation"] = /^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}_[0-9]{10,20}$/;
  return obj;
 };
 
@@ -184,6 +184,40 @@ function validateJSON (obj) {
  return true;
 }
 
+function ensureAuthenticated (req, res, next) {
+ if (req.isAuthenticated()) {
+  return next();
+ }
+// res.send({"status":"failure","message":"Authentication failure"});
+ res.redirect('/login');
+}
+
+function forwardAuthenticated (req, res, next) {
+ if (!req.isAuthenticated()) {
+  return next();
+ }
+// res.send({"status":"success","message":"Session authenticated"});
+ res.redirect('/dashboard');
+}
+
+function validPassword(password, hash, salt) {
+ var hashVerify = crypto
+  .pbkdf2Sync(password, salt, 10000, 64, "sha512")
+  .toString("hex");
+ return hash === hashVerify;
+}
+
+function genPassword(password) {
+ var salt = crypto.randomBytes(32).toString("hex");
+ var genHash = crypto
+  .pbkdf2Sync(password, salt, 10000, 64, "sha512")
+  .toString("hex");
+ return {
+  salt: salt,
+  hash: genHash,
+ };
+}
+
 module.exports = {
  genRegular,
  genSpecial,
@@ -200,5 +234,9 @@ module.exports = {
  getRandomInt,
  replaceAt,
  uuidv4,
- validateJSON
+ validateJSON,
+ ensureAuthenticated,
+ forwardAuthenticated,
+ validPassword,
+ genPassword
 }

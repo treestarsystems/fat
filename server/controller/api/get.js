@@ -17,12 +17,10 @@ async function getAccountsResponse (reqParamsString,reqParamsVariable,callback) 
   if (!getAccountResult) return callback.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
   if (getAccountResult.length == 0) return callback.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
   let getAccountResultCount = 0;
-  if (reqParamsString != 'all') {
-   getAccountResultCount = await Account.countDocuments(queryObj, (err, count) => {
-    if (err) return err;
-    return count;
-   });
-  }
+  getAccountResultCount = await Account.countDocuments(queryObj, (err, count) => {
+   if (err) return err;
+   return count;
+  });
   callback.status(200).send({
    "status":"success",
    "message":"success",
@@ -94,12 +92,10 @@ async function getEntriesResponse (reqParamsString,reqParamsVariable,callback) {
   if (!getEntryResult) return callback.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
   if (getEntryResult.length == 0) return callback.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
   let getEntryResultCount = 0;
-  if (reqParamsString != 'all') {
-   getEntryResultCount = await Entry.countDocuments(queryObj, (err, count) => {
-    if (err) return err;
-    return count;
-   });
-  }
+  getEntryResultCount = await Entry.countDocuments(queryObj, (err, count) => {
+   if (err) return err;
+   return count;
+  });
   callback.status(200).send({
    "status":"success",
    "message":"success",
