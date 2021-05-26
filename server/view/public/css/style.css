@@ -52,6 +52,7 @@ File: style.css
 ==========================  **/
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600");
 @import url("style-mix.css");
+@import url("datta-icon.css");
 /**  =====================
       Custom css start
 ==========================  **/
@@ -185,7 +186,7 @@ p.text-muted {
 }
 
 .card {
-  border-radius: 0;
+  border-radius: 10px;
   -webkit-box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
           box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
   border: none;
@@ -4514,7 +4515,7 @@ body.box-layout .pcoded-navbar.theme-horizontal ~ .pcoded-header {
   background-image: url("../images/nav-bg/navbar-img-5.jpg");
 }
 .doc-img.navbar-images > a[data-value="navbar-image-6"] {
-  background-image: url("https://dev2.mjnshosting.com/templates/datta-able/template/assets/images/nav-bg/navbar-img-6.jpg");
+  background-image: url("../images/nav-bg/navbar-img-6.jpg");
 }
 
 .nav-link.active.h-blue {

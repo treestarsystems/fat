@@ -16,6 +16,7 @@ const daemon = require('./service.js');
 const core = require('./core/core.js');
 const system = require('../system_confs/system_vars.json');
 const jobs = require('./core/cronJobs.js').jobs;
+const handlebarsHelperFunctions = require('./view/handlebars/helpers.js');
 const routes = require('./controller/routes.js');
 
 //Main connection to DB
@@ -71,6 +72,12 @@ app.engine('handlebars', exphbs({
 }));
 
 app.set('view engine', 'handlebars');
+
+//Source: https://stackoverflow.com/a/59930561
+var hbs = exphbs.create({});
+for (var h in handlebarsHelperFunctions) {
+ handlebarsHelperFunctions[h](hbs);
+}
 
 //All routes and pages are called here.
 for (var r in routes) {

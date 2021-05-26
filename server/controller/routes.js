@@ -18,15 +18,33 @@ function pagesEndpoint (app) {
  //Pages
 // app.get('/', core.ensureAuthenticated, (req, res) => {
  app.get('/', (req, res) => {
-  res.render('dashboard', {title: 'Dashboard', layout: 'admin'});
+  res.render('overview', {
+   title: 'Overview',
+   layout: 'admin',
+   customJS: ["public/js/amchart/core.js","public/js/amchart/charts.js","public/js/amchart/themes/animated.js","public/js/fat-overview.js"]
+  });
  });
+
+ app.get('/modify-list', (req, res) => {
+  res.render('form-modify-list', {title: 'Modify List', layout: 'admin'});
+ });
+
+/*
+ app.get('/', (req, res) => {
+  res.render('form-', {title: '', layout: 'admin'});
+ });
+
+ app.get('/', (req, res) => {
+  res.render('form-', {title: '', layout: 'admin'});
+ });
+*/
 
  //User Pages
  app.get('/login', core.forwardAuthenticated, (req, res) => {
-  res.render('user/login', {title: 'Login', layout: 'login'});
+  res.render('user/login', {title: 'Login', layout: 'login', customJS: ["../public/js/fat-user-accounts.js"]});
  });
  app.get('/register', (req, res) => {
-  res.render('user/register', {title: 'Register', layout: 'login'});
+  res.render('user/register', {title: 'Register', layout: 'login', customJS: ["../public/js/fat-user-accounts.js"]});
  });
  app.get('/logout', (req,res) => {
   req.logout();
