@@ -88,25 +88,69 @@ router.post('/entry', async (req, res) => {
  }
 });
 
+//THIS WILL UPDATE THE UUID AS WELL
 router.post('/list', async (req, res) => {
  try {
-  let obj = req.body;
-  let query = List.where({listName: obj.listName});
-  query.setOptions({upsert: true});
-  query.replaceOne(obj)
-   .then(async (list) => {
-     try {
-      const list = await List.findOne({listName: obj.listName},{_id: 0});
-      res.status(200).send({
-       "status":"success",
-       "message":"List has been successfully created/updated.",
-       "timeStamp": Date.now(),
-       "payload":list
-      });
-     } catch (err) {
-      res.status(400).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
-     }
+  let arrayOfObjs = req.body;
+  let errorMessage = "";
+  for (let i = 0; i < arrayOfObjs.length; i++) {
+   //Validate input
+   const {error} = validation.listEntryValidation.validate(arrayOfObjs[i],{abortEarly:false});
+   if (error) {
+    error.details.forEach((ee,ie) => {
+     errorMessage += `List #${i+1}: ${ee.message}. <br><br>`;
+    });
+   }
+  }
+  if (errorMessage) {
+   return res.status(400).send({
+    "status":"failure",
+    "message":`${errorMessage} <br><br>No Lists Have Been Saved. <br><br>`,
+    "timeStamp": Date.now(),
+    "payload":[]
    });
+  }
+  let queryFailureCount = 0;
+  let querySuccessCount = 0;
+  let queryFailureMessage = "";
+  let querySuccessMessage = "";
+  for (let i = 0; i < arrayOfObjs.length; i++) {
+   let query = List.where({listName: arrayOfObjs[i].listName});
+   query.setOptions({upsert: true});
+   query.replaceOne(arrayOfObjs[i])
+    .then(async (list) => {
+      try {
+       await List.countDocuments({listName: arrayOfObjs[i].listName}, (err, count) => {
+        if (err) {
+         queryFailureCount++;
+         queryFailureMessage += `${arrayOfObjs[i].listNameLong}: Error - ${err} <br><br>`;
+        }
+        querySuccessCount++;
+        querySuccessMessage += `${arrayOfObjs[i].listNameLong}: List has been successfully created/updated. <br><br>`;
+       });
+      } catch (err) {
+       queryFailureCount++;
+       queryFailureMessage += `${arrayOfObjs[i].listNameLong}: Error - ${err} <br><br>`;
+      }
+      if (arrayOfObjs.length-1 == i) {
+       if (queryFailureCount > 0) {
+        res.status(400).send({
+         "status":"failure",
+         "message":`Failure(${queryFailureCount}): <br>${queryFailureMessage}<br><br>Success(${querySuccessCount}): <br>${querySuccessMessage}`,
+         "timeStamp": Date.now(),
+         "payload":""
+        });
+       } else {
+        res.status(200).send({
+         "status":"success",
+         "message":`${querySuccessCount} List(s) has been successfully created/updated.`,
+         "timeStamp": Date.now(),
+         "payload":""
+        });
+       }
+      }
+    });
+  }
  } catch (err) {
   res.status(400).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
  }

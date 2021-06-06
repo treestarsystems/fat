@@ -13,7 +13,7 @@ const accountValidation = joi.object({
   .label('Account Description'),
  accountType: joi.string()
   .label('Account Type')
-  .pattern(core.coreRegExs().accountTypeValidation)
+  .pattern(core.coreRegExs().accountTypePrimaryValidation)
   .message("\"Account Type\" selection is invalid")
   .required(),
  institution: joi.string()
@@ -41,6 +41,20 @@ const accountEntryValidation = joi.object({
  balance: joi.number()
   .label('Balance')
   .min(0),
+});
+
+const listEntryValidation = joi.object({
+ list: joi.array()
+  .label('List')
+  .required(),
+ listName: joi.string()
+  .label('List Name')
+  .max(255)
+  .message("\"List Name\" must be less than 255 characters"),
+ listNameLong: joi.string()
+  .label('List Name Long')
+  .max(255)
+  .message("\"List Name Long\" must be less than 255 characters"),
 });
 
 const registerValidation = joi.object({
@@ -89,6 +103,7 @@ const loginValidation = joi.object({
 module.exports = {
  accountValidation,
  accountEntryValidation,
+ listEntryValidation,
  registerValidation,
  loginValidation
 }

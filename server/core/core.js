@@ -27,8 +27,8 @@ var coreVars = {
 
 //Define your lists here
 var fatVars = {
- "accountTypeList":["retirement","generalinvesting","crypto","debt","checking","savings","creditscore","creditcard","loan"],
- "accountBaseTypeList":["asset","liability","score"],
+ "accountTypePrimaryList":["asset","liability","expense","equity","revenue"],
+ "accountTypeSecondaryList":["retirement","generalinvesting","crypto","debt","checking","savings","creditscore","creditcard","loan"],
  "institutionList":["m1finance","coinbase","massmutual","brightstarcreditunion","bbt","lowes"],
  "entryTypeList":["update","financetracker","bill"],
  "accessLevelList":["member","admin"]

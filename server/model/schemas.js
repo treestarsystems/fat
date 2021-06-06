@@ -39,9 +39,17 @@ const listEntrySchema = new mongoose.Schema({
   type: String,
   required: true
  },
+ listNameLong: {
+  type: String,
+  required: true
+ },
  list: {
   type: Array,
   required: true
+ },
+ listUUID: {
+  type: String,
+  default: `L-${core.uuidv4()}_${Date.now()}`
  },
  timeStamp: {
   type: Number,

@@ -26,7 +26,11 @@ function pagesEndpoint (app) {
  });
 
  app.get('/modify-list', (req, res) => {
-  res.render('form-modify-list', {title: 'Modify List', layout: 'admin'});
+  res.render('form-modify-list', {title: 'Modify List', layout: 'admin', customJS: ["public/js/fat-form-modify-list.js"]});
+ });
+
+ app.get('/ie', (req, res) => {
+  res.render('ie', {title: 'Incompatible Browser', layout: 'login', customJS: ["public/js/fat-user-accounts.js"]});
  });
 
 /*
@@ -41,10 +45,10 @@ function pagesEndpoint (app) {
 
  //User Pages
  app.get('/login', core.forwardAuthenticated, (req, res) => {
-  res.render('user/login', {title: 'Login', layout: 'login', customJS: ["../public/js/fat-user-accounts.js"]});
+  res.render('user/login', {title: 'Login', layout: 'login', customJS: ["public/js/fat-user-accounts.js"]});
  });
  app.get('/register', (req, res) => {
-  res.render('user/register', {title: 'Register', layout: 'login', customJS: ["../public/js/fat-user-accounts.js"]});
+  res.render('user/register', {title: 'Register', layout: 'login', customJS: ["public/js/fat-user-accounts.js"]});
  });
  app.get('/logout', (req,res) => {
   req.logout();

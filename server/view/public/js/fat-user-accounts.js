@@ -1,7 +1,7 @@
 //Take an array of image file names and the id of the img element
 function randomPicture(pa,id) {
  let randomPicture = pa[Math.floor(Math.random() * pa.length)];
- document.getElementById(id).src = `../public/images/${randomPicture}`;
+ document.getElementById(id).src = `public/images/${randomPicture}`;
 }
 
 loginPictureArray = [
@@ -24,6 +24,7 @@ loginPictureArray = [
  'money_plant_grow_growth_business_finance_wealth.svg'
 ];
 
-if (window.location.pathname == "/login" || window.location.pathname == "/register") {
+let pageRegEx = /\/login|\/register|\/ie/g;
+if (window.location.pathname.match(pageRegEx)) {
  randomPicture(loginPictureArray,'login-image');
 }

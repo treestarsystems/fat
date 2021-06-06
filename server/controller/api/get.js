@@ -5,6 +5,7 @@ const validation = require('../../model/validation');
 const passport = require('passport');
 const Account = require('../../model/schemas').accountModel;
 const Entry = require('../../model/schemas').accountEntryModel;
+const List = require('../../model/schemas').listEntryModel;
 const coinbaseCustom = require('../coinbase/coinbaseCustom.js');
 
 //Account Endpoints
@@ -128,6 +129,43 @@ router.get('/entry/accountuuid/:userInput', async (req, res) => {
 router.get('/entry/type/:userInput', async (req, res) => {
  let paramsVar = req.params.userInput;
  await getEntriesResponse ('entryType',paramsVar,res);
+});
+
+//List Endpoints
+async function getListResponse (reqParamsString,reqParamsVariable,callback) {
+ let queryObj = {};
+ if (reqParamsString != 'all') queryObj[`${reqParamsString}`] = reqParamsVariable;
+ try {
+  //Check if entries exists
+  const getListResult = await List.find(queryObj,{_id:0,__v:0});
+  if (!getListResult) return callback.status(400).send({"status":"failure","message":"No Matching List(s) Exist","timeStamp":Date.now(),"payload":[]});
+  if (getListResult.length == 0) return callback.status(400).send({"status":"failure","message":"No Matching List(s) Exist","timeStamp":Date.now(),"payload":[]});
+  let getListResultCount = 0;
+  getListResultCount = await List.countDocuments(queryObj, (err, count) => {
+   if (err) return err;
+   return count;
+  });
+  callback.status(200).send({
+   "status":"success",
+   "message":"success",
+   "timeStamp":Date.now(),
+   "totalRecords":getListResultCount,
+   "payload":getListResult
+  });
+ } catch (err) {
+  console.log(`get:entry:${reqParamsString}`, err)
+  callback.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
+ }
+}
+
+router.get('/list/all', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await getListResponse ('all',paramsVar,res);
+});
+
+router.get('/list/name/:userInput', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await getListResponse ('listName',paramsVar,res);
 });
 
 module.exports = router;
