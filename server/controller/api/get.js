@@ -138,8 +138,38 @@ async function getListResponse (reqParamsString,reqParamsVariable,callback) {
  try {
   //Check if entries exists
   const getListResult = await List.find(queryObj,{_id:0,__v:0});
-  if (!getListResult) return callback.status(400).send({"status":"failure","message":"No Matching List(s) Exist","timeStamp":Date.now(),"payload":[]});
-  if (getListResult.length == 0) return callback.status(400).send({"status":"failure","message":"No Matching List(s) Exist","timeStamp":Date.now(),"payload":[]});
+  if (!getListResult) return callback.status(200).send({"status":"failure","message":"No Matching List(s) Exist","timeStamp":Date.now(),"payload":[]});
+  if (getListResult.length == 0) return callback.status(200).send({"status":"failure","message":"No Matching List(s) Exist","timeStamp":Date.now(),"payload":[]});
+  //Check if all required lists exist.
+  let fatRequiredLists = core.coreRegExs().fatRequiredLists;
+  //Return only the lists that are missing.
+  for (let i = 0; i < getListResult.length; i++) {
+   if (fatRequiredLists.includes(getListResult[i].listName)) {
+    let targetIndex = fatRequiredLists.indexOf(getListResult[i].listName);
+    fatRequiredLists.splice(targetIndex,1)
+   }
+   if (getListResult.length-1 == i && fatRequiredLists.length > 0) {
+    return callback.status(200).send({
+     "status":"failure",
+     "message":`Missing Required List(s) (${fatRequiredLists})`,
+     "missingLists": fatRequiredLists,
+     "timeStamp":Date.now(),
+     "payload":getListResult
+    });
+   }
+  }
+/*
+  for (let i = 0; i < getListResult.length; i++) {
+   if (!fatRequiredLists.includes(getListResult[i].listName)) {
+    return callback.status(200).send({
+     "status":"failure",
+     "message":`Missing Required List(s) (${fatRequiredLists})`,
+     "timeStamp":Date.now(),
+     "payload":getListResult
+    });
+   }
+  }
+*/
   let getListResultCount = 0;
   getListResultCount = await List.countDocuments(queryObj, (err, count) => {
    if (err) return err;
@@ -154,7 +184,7 @@ async function getListResponse (reqParamsString,reqParamsVariable,callback) {
   });
  } catch (err) {
   console.log(`get:entry:${reqParamsString}`, err)
-  callback.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
+  callback.status(200).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
 }
 

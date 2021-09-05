@@ -13,40 +13,19 @@
                             <div class="col-xl-8 col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Modify List</h5>
+                                     <h5>Modify List</h5>
+                                     <i class="feather icon-edit f-20 text-c-blue" style="cursor: pointer;" onclick="editList();"></i>  
                                     </div>
                                     <div class="card-block">
+                                        <div class="row" style="margin-bottom:10px;">
+                                          <div class="col-md" style="text-align: center;">
+                                            <h5>Default/Current Lists</h5>
+                                          </div>
+                                        </div>
                                         <div class="row" id="modifyListBody" style="height:65vh;overflow: auto;">
                                             <div class="col-md">
-                                                <div class="row" style="margin-bottom:10px;">
-                                                    <div class="col-md" style="text-align: center;">
-                                                        <h5>Default/Current Lists</h5>
-                                                    </div>
-                                                </div>
                                                 <div id="currentListsDiv"></div>
                                             </div>
-{{!--
-                                            <div class="col-md style="border-left: 1px solid #eaeaea;"">
-                                                <div class="row" style="margin-bottom:10px;">
-                                                    <div class="col-md" style="text-align: center;">
-                                                        <h5>Edit Lists</h5>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div id="addNewListsDiv"></div>
-                                                    <div class="col-md-4" style="margin-top: 5px;">
-                                                     <select class="js-example-basic-single" name="defaultLists">
-                                                     </select>
-                                                    </div>
-                                                    <div class="col-md-6" style="margin-top: 5px;">
-                                                        <select id="listSelect-0" class="js-example-tags col-sm-12" multiple="multiple" placeholder=""></select>
-                                                    </div>
-                                                    <div class="col-md-2" style="text-align: center;margin-top: 5px;">
-                                                        <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: 30px;height: 30px;padding: 3px 5px;"><i class="feather icon-check-circle"></i></button>
-                                                    </div>
-                                                </div>
-                                            </div>
---}}
                                         </div>
                                     </div>
                                 </div>

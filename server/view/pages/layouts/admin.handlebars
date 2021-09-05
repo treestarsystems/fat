@@ -1,32 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <title>FAT: {{title}}</title>
-    <!-- Meta -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="description" content=""/>
-    <meta name="keywords" content=""/>
-    <meta name="author" content="TREE STAR SYSTEMS" />
-
-    <!-- Favicon icon -->
-    <link rel="icon" href="public/images/favicon.ico" type="image/x-icon">
-    <!-- fontawesome icon -->
-    <link rel="stylesheet" href="public/fonts/fontawesome/css/fontawesome-all.min.css">
-    <link rel="stylesheet" href="public/css/sweetalert2.min.css">
-    <link rel="stylesheet" href="public/css/animate.min.css">
-    <link rel="stylesheet" href="public/css/style.css">
-    {{{enableDarkMode}}}
-    <link rel="stylesheet" href="public/css/select2.min.css">
-    <link rel="stylesheet" href="public/css/multi-select.css">
-    <link rel="stylesheet" href="public/css/feather.css">
-    <link rel="stylesheet" href="public/css/fat.css">
-
-</head>
-
-<body>
+ <head>
+     <title>FAT: {{title}}</title>
+     <!-- Meta -->
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+     <meta name="description" content=""/>
+     <meta name="keywords" content=""/>
+     <meta name="author" content="TREE STAR SYSTEMS" />
+     <!-- Favicon icon -->
+     <link rel="icon" href="public/images/favicon.ico" type="image/x-icon">
+     <!-- fontawesome icon -->
+     <link rel="stylesheet" href="public/fonts/fontawesome/css/fontawesome-all.min.css">
+     <link rel="stylesheet" href="public/css/sweetalert2.min.css">
+     <link rel="stylesheet" href="public/css/animate.min.css">
+     <link rel="stylesheet" href="public/css/style.css">
+     {{{enableDarkMode}}}
+     <link rel="stylesheet" href="public/css/select2.min.css">
+     <link rel="stylesheet" href="public/css/multi-select.css">
+     <link rel="stylesheet" href="public/css/feather.css">
+     <link rel="stylesheet" href="public/css/fat.css">
+ </head>
+ <body>
     <!-- [ Pre-loader ] start -->
     <div class="loader-bg">
         <div class="loader-track">
@@ -34,11 +30,9 @@
         </div>
     </div>
     <!-- [ Pre-loader ] End -->
-
     {{> navigation }}
     {{> chat }}
     {{{body}}}
-
  <br><div class="col-md-12" style="text-align:center;" id="ipAddress"></div><br> 
  <script>
   function IEdetection() {
@@ -56,9 +50,7 @@
    }
    return ('Not IE');
   }
-
   var result = IEdetection();
-
   if (result != 'Not IE') {
    window.location = "/ie";
   }
@@ -73,12 +65,12 @@
  <script src="public/js/axios.min.js"></script>
 
  <!-- select2 JS -->
-{{!-- <script src="public/js/jquery-3.5.1.slim.min.js"></script> --}}
+ {{!-- <script src="public/js/jquery-3.5.1.slim.min.js"></script> --}}
  <script src="public/js/jquery.multi-select.js"></script>
  <script src="public/js/select2.full.min.js"></script>
 
  <!-- peity Chart JS -->
-{{!-- <script src="public/js/peity/js/peity.js"></script> --}}
+ {{!-- <script src="public/js/peity/js/peity.js"></script> --}}
 
  <!-- FAT Custom JS -->
  <script src="public/js/fat.js"></script>
@@ -86,10 +78,8 @@
  {{#if customJS}}
   {{{loadCustomJS customJS}}}
  {{/if}}
-
  <script>
    feather.replace()
  </script>
-
-</body>
+ </body>
 </html>

@@ -1,0 +1,207 @@
+<template>
+<div>
+    <!-- [ Pre-loader ] start -->
+    <div class="loader-bg">
+        <div class="loader-track">
+            <div class="loader-fill"></div>
+        </div>
+    </div>
+    <!-- [ Pre-loader ] End -->
+    <!-- [ navigation menu ] start ./view/pages/partials/navigation.handlebars -->
+    <nav class="pcoded-navbar" style="z-index:99999">
+        <div class="navbar-wrapper">
+            <div class="navbar-brand header-logo">
+                <a href="/" class="b-brand">
+                    <div class="b-bg">
+                        <i class="feather icon-trending-up"></i>
+                    </div>
+                    <span class="b-title" style="font-size:15px;">Financial Asset Tracker</span>
+                </a>
+                <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
+            </div>
+            <div class="navbar-content scroll-div">
+                <ul class="nav pcoded-inner-navbar">
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Navigation</label>
+                    </li>
+                    <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link"><span class="pcoded-micon"><i data-feather="trending-up"></i></span><span class="pcoded-mtext">Dashboards</span></a>
+                        <ul class="pcoded-submenu">
+                            <li><a href="/">Overview &nbsp;<i data-feather="home" width="13px" style="vertical-align:middle"></i></a></li>
+                            <li><a href="/finance-tracker">Finance Tracker &nbsp;<i data-feather="monitor" width="13px" style="vertical-align:middle"></i></a></li>
+                            <li><a href="/bills">Monthly Bills &nbsp;<i data-feather="credit-card" width="13px" style="vertical-align:middle"></i></a></li>
+                            <li><a href="/ammoritization-table">Ammoritization Table &nbsp;<i data-feather="list" width="13px" style="vertical-align:middle"></i></a></li>
+                            <li class="pcoded-hasmenu"><a href="javascript:">Precious Metals &nbsp;<i data-feather="box" width="13px" style="vertical-align:middle"></i></a>
+                                <ul class="pcoded-submenu">
+                                    <li><a href="/silver">Silver</a></li>
+                                    <li><a href="/gold">Gold</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li data-username="Vertical Horizontal Box Layout RTL fixed static Collapse menu color icon dark" class="nav-item pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link"><span class="pcoded-micon"><i data-feather="tool"></i></span><span class="pcoded-mtext">Tools/Calculators</span></a>
+                        <ul class="pcoded-submenu">
+                            <li><a href="land-calculator">Land Calculator &nbsp;<i data-feather="map" width="13px" style="vertical-align:middle"></i></a></li>
+                        </ul>
+                    </li>
+                    <li data-username="widget Statistic Data Table User card Chart" class="nav-item pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link"><span class="pcoded-micon"><i data-feather="layers"></i></span><span class="pcoded-mtext">Forms</span></a>
+                        <ul class="pcoded-submenu">
+                            <li><a href="/modify-list">Modify Lists</a></li>
+                            <li><a href="/modify-account">Modify Accounts</a></li>
+                            <li><a href="/modify-entry">Modify Entries</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Settings</label>
+                    </li>
+                    <li data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds" class="nav-item pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link"><span class="pcoded-micon"><i data-feather="settings"></i></span><span class="pcoded-mtext">Configuration</span></a>
+                        <ul class="pcoded-submenu">
+                            <li><a href="bc_alert.html">API Keys &nbsp;<i data-feather="key" width="13px" style="vertical-align:middle"></i></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Support</label>
+                    </li>
+                    <li data-username="Menu levels Menu level 2.1 Menu level 2.2" class="nav-item pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link"><span class="pcoded-micon"><i data-feather="book"></i></span><span class="pcoded-mtext">Documentation</span></a>
+                        <ul class="pcoded-submenu">
+                            <li><a href="https://treestarsystems.atlassian.net/wiki/home" target="_blank">Project Documentation &nbsp;<i data-feather="book" width="13px" style="vertical-align:middle"></i></a></li>
+                            <li class="pcoded-hasmenu">
+                                <a href="javascript:">GitHub &nbsp;<i data-feather="github" width="13px" style="vertical-align:middle"></i></a>
+                                <ul class="pcoded-submenu">
+                                    <li><a href="https://github.com/treestarsystems/fat" target="_blank">Project Repository</a></li>
+                                    <li><a href="https://github.com/treestarsystems" target="_blank">Tree Star Systems</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li data-username="Need Support" class="nav-item"><a href="https://treestarsystems.com/" class="nav-link" target="_blank"><span class="pcoded-micon"><i data-feather="help-circle"></i></span><span class="pcoded-mtext">Need Support ?</span></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- [ navigation menu ] end -->
+
+    <!-- [ Header ] start -->
+    <header class="navbar pcoded-header navbar-expand-lg navbar-light">
+        <div class="m-header">
+            <a class="mobile-menu" id="mobile-collapse1" href="javascript:"><span></span></a>
+            <a href="/" class="b-brand">
+               <div class="b-bg">
+                   <i class="feather icon-trending-up"></i>
+               </div>
+               <span class="b-title">Financial Asset Tracker</span>
+           </a>
+        </div>
+        <a class="mobile-menu" id="mobile-header" href="javascript:">
+            <i class="feather icon-more-horizontal"></i>
+        </a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li><a href="javascript:" class="full-screen" onclick="javascript:toggleFullScreen()"><i class="feather icon-maximize-2"></i></a></li>
+                <li class="nav-item">
+                    <div class="main-search">
+                        <div class="input-group">
+                            <input type="text" id="m-search" class="form-control" placeholder="Search . . .">
+                            <a href="javascript:" class="input-group-append search-close">
+                                <i class="feather icon-x input-group-text"></i>
+                            </a>
+                            <span class="input-group-append search-btn btn btn-primary">
+                                <i class="feather icon-search input-group-text"></i>
+                            </span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
+                        <div class="dropdown-menu dropdown-menu-right notification">
+                            <div class="noti-head">
+                                <h6 class="d-inline-block m-b-0">Notifications</h6>
+                                <div class="float-right">
+                                    <a href="javascript:" class="m-r-10">mark as read</a>
+                                    <a href="javascript:">clear all</a>
+                                </div>
+                            </div>
+                            <ul class="noti-body">
+                                <li class="n-title">
+                                    <p class="m-b-0">NEW</p>
+                                </li>
+                                <li class="notification">
+                                    <div class="media">
+                                        <img class="img-radius" src="public/images/user/avatar-1.jpg" alt="Generic placeholder image">
+                                        <div class="media-body">
+                                            <p><strong>John Doe</strong><span class="n-time text-muted"><i class="icon feather icon-clock m-r-10"></i>30 min</span></p>
+                                           <p>New ticket Added</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="n-title">
+                                    <p class="m-b-0">EARLIER</p>
+                                </li>
+                                <li class="notification">
+                                    <div class="media">
+                                        <img class="img-radius" src="public/images/user/avatar-2.jpg" alt="Generic placeholder image">
+                                        <div class="media-body">
+                                            <p><strong>Joseph William</strong><span class="n-time text-muted"><i class="icon feather icon-clock m-r-10"></i>30 min</span></p>
+                                            <p>Prchace New Theme and make payment</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="notification">
+                                    <div class="media">
+                                        <img class="img-radius" src="public/images/user/avatar-3.jpg" alt="Generic placeholder image">
+                                        <div class="media-body">
+                                            <p><strong>Sara Soudein</strong><span class="n-time text-muted"><i class="icon feather icon-clock m-r-10"></i>30 min</span></p>
+                                            <p>currently login</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="noti-footer">
+                                <a href="javascript:">show all</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="javascript:" class="displayChatbox"><i class="icon feather icon-activity"></i></a></li>
+                <li>
+                    <div class="dropdown drp-user">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon feather icon-settings"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right profile-notification">
+                            <div class="pro-head">
+                                <img src="public/images/user/avatar-1.jpg" class="img-radius" alt="User-Profile-Image">
+                                <span>John Doe</span>
+                                <a href="auth-signin.html" class="dud-logout" title="Logout">
+                                    <i class="feather icon-log-out"></i>
+                                </a>
+                            </div>
+                            <ul class="pro-body">
+                                <li><a href="javascript:" class="dropdown-item"><i class="feather icon-settings"></i> Settings</a></li>
+                                <li><a href="javascript:" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
+                                <li><a href="message.html" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li>
+                                <li><a href="auth-signin.html" class="dropdown-item"><i class="feather icon-lock"></i> Lock Screen</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <!-- [ Header ] end -->
+
+<Nuxt />
+</div>
+</template>
+
+<script>
+export default {
+}
+<script>

@@ -1,16 +1,17 @@
 {
    "name": "fat",
-   "version": "1.0.0",
+   "version": "1.1.0",
    "description": "Financial Asset Tracker",
    "main": "index.js",
    "scripts": {
-      "start": "pm2 start system_confs/ecosystem.config.js --env prod",
-      "dev": "pm2 start system_confs/ecosystem.config.js --env dev",
-      "stop-instance": "server/service.js -k",
-      "status-instance": "pm2 status",
-      "delete-instance": "server/service.js -d",
-      "restart-instance": "server/service.js -r",
-      "log-instance": "pm2 log"
+    "start": "pm2 start system_confs/ecosystem.config.js --env prod",
+    "dev": "pm2 start system_confs/ecosystem.config.js --env dev",
+    "stop-instance": "server/service.js -k",
+    "status-instance": "server/service.js -s",
+    "jsonstatus-instance": "server/service.js -j",
+    "delete-instance": "server/service.js -d",
+    "reload-instance": "server/service.js -r",
+    "log-instance": "pm2 log onboarding"
    },
    "repository": {
       "type": "git",

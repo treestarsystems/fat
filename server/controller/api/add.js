@@ -27,7 +27,8 @@ router.post('/account', async (req, res) => {
   //Define object to be saved.
   const accountObj = new Account({
    accountName: obj.accountName.toUpperCase(),
-   accountType: obj.accountType,
+   accountTypePrimary: obj.accountTypePrimary,
+   accountTypeSecondary: obj.accountTypeSecondary,
    accountDescription: (obj.accountDescription? obj.accountDescription : ''),
    institution: obj.institution
   });
@@ -115,6 +116,8 @@ router.post('/list', async (req, res) => {
   let queryFailureMessage = "";
   let querySuccessMessage = "";
   for (let i = 0; i < arrayOfObjs.length; i++) {
+   arrayOfObjs[i].listUUID = `L-${core.uuidv4()}_${Date.now()}_${core.genRegular(2)}`;
+   arrayOfObjs[i].timeStamp = Date.now();
    let query = List.where({listName: arrayOfObjs[i].listName});
    query.setOptions({upsert: true});
    query.replaceOne(arrayOfObjs[i])

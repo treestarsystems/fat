@@ -26,7 +26,7 @@ var coreVars = {
 };
 
 //Define your lists here
-var fatVars = {
+var fatLists = {
  "accountTypePrimaryList":["asset","liability","expense","equity","revenue"],
  "accountTypeSecondaryList":["retirement","generalinvesting","crypto","debt","checking","savings","creditscore","creditcard","loan"],
  "institutionList":["m1finance","coinbase","massmutual","brightstarcreditunion","bbt","lowes"],
@@ -37,16 +37,21 @@ var fatVars = {
 //Convert your lists to regExs
 function createValidationRegExs () {
  let validationObj = {};
- for (let key in fatVars) {
+ let arrayOfLists = [];
+ for (let key in fatLists) {
+  //Remoe the accessLevelList and others if needed in the future.
+  if (!key.match(/accessLevelList/g)) arrayOfLists.push(key.replace('List',''));
   let result = '';
-  for (let i = 0; i < fatVars[key].length; i++) {
-   result += `^${fatVars[key][i]}$`;
-   if (fatVars[key].length-1 != i) result += '|';
-   if (fatVars[key].length-1 == i) {
+  for (let i = 0; i < fatLists[key].length; i++) {
+   result += `^${fatLists[key][i]}$`;
+   if (fatLists[key].length-1 != i) result += '|';
+   if (fatLists[key].length-1 == i) {
     validationObj[`${key.replace('List','Validation')}`] = RegExp(result);
    }
   }
+  validationObj['fatRequiredLists'] = arrayOfLists;
  }
+
  return validationObj;
 }
 

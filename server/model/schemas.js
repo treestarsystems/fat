@@ -12,9 +12,15 @@ const accountSchema = new mongoose.Schema({
   type: String,
   max: 255
  },
- accountType: {
+ accountTypePrimary: {
   type: String,
-  match: core.coreRegExs().accountTypeValidation,
+  match: core.coreRegExs().accountTypePrimaryValidation,
+  required: true,
+  max: 255
+ },
+ accountTypeSecondary: {
+  type: String,
+  match: core.coreRegExs().accountTypeSecondaryValidation,
   required: true,
   max: 255
  },
@@ -48,12 +54,10 @@ const listEntrySchema = new mongoose.Schema({
   required: true
  },
  listUUID: {
-  type: String,
-  default: `L-${core.uuidv4()}_${Date.now()}`
+  type: String
  },
  timeStamp: {
-  type: Number,
-  default: Date.now()
+  type: Number
  }
 });
 
