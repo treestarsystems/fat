@@ -55,9 +55,9 @@ function capitalizeFirstCharacter (str) {
  }
 };
 
-function catchErrorMessagePopUp (errorString,targetDiv) {
+function popupErrorHandler (errorString,targetDiv) {
+ let errorMessage = ((errorString.message) ? errorString.message:errorString);
  try {
-  console.error(errorString);
   Swal.fire({
    icon: 'error',
    title: 'Error: Check Console',
@@ -68,11 +68,22 @@ function catchErrorMessagePopUp (errorString,targetDiv) {
    customClass: {
     container: 'position-absolute'
    },
-   html: `Error Message: ${errorString}<br><br><button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Close</button>`,
+   html: `${errorMessage}<br><br><button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Close</button>`,
   });
  } catch (e) {
-  console.log(e);
+  return defaultErrorHandler(e);
  }
+}
+
+function defaultErrorHandler (errorString) {
+ let returnObj = {"status": "","message": "","payload": ""};
+ //This is done just incase you use the "throw" keyword to produce your own error.
+ let errorMessage = ((errorString.message) ? errorString.message:errorString);
+ returnObj.status = "failure";
+ returnObj.message = `Function: ${arguments.callee.caller.name} - Error: ${errorMessage}`;
+ returnObj.payload = errorString;
+ console.error(returnObj);
+ return returnObj;
 }
 
 showActiveNavigation();
