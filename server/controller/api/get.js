@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const core = require('../../core/core');
+const generators = require('../../core/generators');
 const validation = require('../../model/validation');
 const passport = require('passport');
 const Account = require('../../model/schemas').accountModel;
@@ -141,7 +142,9 @@ async function getListResponse (reqParamsString,reqParamsVariable,callback) {
   if (!getListResult) return callback.status(200).send({"status":"failure","message":"No Matching List(s) Exist","timeStamp":Date.now(),"payload":[]});
   if (getListResult.length == 0) return callback.status(200).send({"status":"failure","message":"No Matching List(s) Exist","timeStamp":Date.now(),"payload":[]});
   //Check if all required lists exist.
-  let fatRequiredLists = core.coreRegExs().fatRequiredLists;
+//  let fatRequiredLists = core.coreRegExs().fatRequiredLists;
+  let generateRequiredLists = await generators.generateListObj(getListResult).then((lists) => {return lists});
+  let fatRequiredLists = generateRequiredLists.coreRegExs.fatRequiredLists;
   //Return only the lists that are missing.
   for (let i = 0; i < getListResult.length; i++) {
    if (fatRequiredLists.includes(getListResult[i].listName)) {

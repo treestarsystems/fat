@@ -25,6 +25,7 @@ var coreVars = {
  "keys": keys
 };
 
+/*
 //Define your lists here
 var fatLists = {
  "accountTypePrimaryList":["asset","liability","expense","equity","revenue"],
@@ -35,30 +36,29 @@ var fatLists = {
 }
 
 //Convert your lists to regExs
-function createValidationRegExs () {
+function createValidationRegExs (lists) {
  let validationObj = {};
  let arrayOfLists = [];
- for (let key in fatLists) {
+ for (let key in lists) {
   //Remoe the accessLevelList and others if needed in the future.
   if (!key.match(/accessLevelList/g)) arrayOfLists.push(key.replace('List',''));
   let result = '';
-  for (let i = 0; i < fatLists[key].length; i++) {
-   result += `^${fatLists[key][i]}$`;
-   if (fatLists[key].length-1 != i) result += '|';
-   if (fatLists[key].length-1 == i) {
+  for (let i = 0; i < lists[key].length; i++) {
+   result += `^${lists[key][i]}$`;
+   if (lists[key].length-1 != i) result += '|';
+   if (lists[key].length-1 == i) {
     validationObj[`${key.replace('List','Validation')}`] = RegExp(result);
    }
   }
   validationObj['fatRequiredLists'] = arrayOfLists;
  }
-
  return validationObj;
 }
 
 //Assign regExs to the coreRegExs obj for use in model/schema.js and model/validation.js files
 var coreRegExs = () => {
  let obj = {};
- let validationRegExs = createValidationRegExs();
+ let validationRegExs = createValidationRegExs(fatLists);
  for (let key in validationRegExs) {
   obj[key] = validationRegExs[key];
  }
@@ -68,6 +68,7 @@ var coreRegExs = () => {
  obj["userUUIDValidation"] = /^U-[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}_[0-9]{10,20}$/;
  return obj;
 };
+*/
 
 //Required directories
 coreVars.systemConfsDir = `${coreVars.installedDir}/system_confs`;
@@ -232,7 +233,7 @@ module.exports = {
  changePerm,
  incorrectUser,
  coreVars,
- coreRegExs,
+// coreRegExs,
  system,
  genSpecialOnly,
  randomCaps,

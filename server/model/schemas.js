@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const core = require('../core/core');
+const crypto = require("crypto");
+
 
 const accountSchema = new mongoose.Schema({
  accountName: {
@@ -14,25 +16,22 @@ const accountSchema = new mongoose.Schema({
  },
  accountTypePrimary: {
   type: String,
-  match: core.coreRegExs().accountTypePrimaryValidation,
   required: true,
   max: 255
  },
  accountTypeSecondary: {
   type: String,
-  match: core.coreRegExs().accountTypeSecondaryValidation,
   required: true,
   max: 255
  },
  institution: {
   type: String,
-  match: core.coreRegExs().institutionValidation,
   min: 3,
   max: 255
  },
  accountUUID: {
   type: String,
-  default: `A-${core.uuidv4()}_${Date.now()}`
+  default: `A-${crypto.randomBytes(16).toString("hex")}`
  },
  timeStamp: {
   type: Number,
@@ -64,7 +63,6 @@ const listEntrySchema = new mongoose.Schema({
 const accountEntrySchema = new mongoose.Schema({
  accountUUID: {
   type: String,
-  match: core.coreRegExs().accountUUIDValidation,
   required: true
  },
  entryDescription: {
@@ -73,7 +71,6 @@ const accountEntrySchema = new mongoose.Schema({
  },
  entryType: {
   type: String,
-  match: core.coreRegExs().entryTypeValidation,
   required: true,
   max: 255
  },
@@ -83,7 +80,7 @@ const accountEntrySchema = new mongoose.Schema({
  },
  entryUUID: {
   type: String,
-  default: `E-${core.uuidv4()}_${Date.now()}`
+  default: `E-${crypto.randomBytes(16).toString("hex")}`
  },
  timeStamp: {
   type: Number,
@@ -116,7 +113,7 @@ const userSchema = new mongoose.Schema({
  },
  userUUID: {
   type: String,
-  default: `U-${core.uuidv4()}_${Date.now()}`,
+  default: `U-${crypto.randomBytes(16).toString("hex")}`,
   required: true
  },
  hash: {

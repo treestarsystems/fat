@@ -23,7 +23,7 @@ var pageSpecificTargetDiv = 'modifyAccountBody';
    if (response.data.status == 'faulire') {
     throw response.data.message;
    }
-   if (response.data.status == 'success1') {
+   if (response.data.status == 'success') {
     if (response.data.totalRecords != 0) {
      toastOptions['icon'] = 'success';
      toastOptions['title'] = 'Accounts Loaded';
@@ -49,6 +49,73 @@ async function generateAccountEntryPrompt (obj) {
    return response.data;
   });
  //Takes single list object;
+ function generateOptions (obj,listName,accountObj) {
+console.log(listName,accountObj[listName])
+  let options = '';
+  for (let i = 0; i < obj.length; i++) {
+   if (listName == obj[i].listName) {
+    let sortedList = obj[i].list.sort();
+console.log(sortedList)
+    for (let o = 0; o < sortedList.length; o++) {
+     if (accountObj[listName] == sortedList[o]) {
+      options += `<option value="${sortedList[o]}" selected>${sortedList[o].toUpperCase()}</option>`;
+     } else {
+      options += `<option value="${sortedList[o]}">${sortedList[o].toUpperCase()}</option>`;
+     }
+    }
+   }
+  }
+  return options;
+ }
+ let html = `<div id="accountItemContainer">`;
+ let payload = obj.payload;
+ for (let i = 0; i < payload.length; i++) {
+  let options;
+  for (let key in payload[i]) {
+   if (!key.match(/accountUUID|accountTypePrimary|accountTypeSecondary|institution|timeStamp/g)) {
+    html += `
+     <div class="row" style="margin-bottom: 5px;">
+      <div class="col-md-12">
+       <span class="d-block" style="font-size: 13px;display: unset !important;">${key.replace('account','')}:</span>
+       <input type="text" class="form-control" value="${payload[i][key]}">
+      </div>
+     </div>
+    `;
+   } else if (key.match(/institution|accountTypePrimary|accountTypeSecondary/g)){
+    html += `
+     <div class="row" style="margin-bottom: 5px;">
+      <div class="col-md-12">
+       <span class="d-block" style="font-size: 13px;display: unset !important;">${capitalizeFirstCharacter(key.replace('accountType','Account Type '))}:</span>
+       <select class="custom-select">
+        ${generateOptions(lists.payload,key,obj.payload[0])}
+       </select>
+      </div>
+     </div>
+    `;
+   }
+  }
+ }
+ html += `
+   <div class="row" style="margin-top:25px">
+    <div class="col-md" style="text-align:center;">
+     <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="submitAccounts();"><i class="feather icon-check-circle"></i>&nbsp;Submit</button>
+     <button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Cancel</button>
+    </div>
+   </div>
+  </div>`;
+ return html;
+}
+
+//Object received from server
+async function generateAddAccountPrompt () {
+ let lists = await axios({
+  method: 'get',
+  url: 'api/get/list/all',
+ })
+  .then((response) => {
+   return response.data;
+  });
+ //Takes single list object;
  function generateOptions (obj,listName) {
   let options = '';
   for (let i = 0; i < obj.length; i++) {
@@ -62,7 +129,11 @@ async function generateAccountEntryPrompt (obj) {
   return options;
  }
  let html = `<div id="accountItemContainer">`;
- let payload = obj.payload;
+ let payload = {
+  accountTypePrimary:"",
+  accountTypeSecondary:"",
+  institution:""
+ };
  for (let i = 0; i < payload.length; i++) {
   let options;
   for (let key in payload[i]) {
@@ -126,8 +197,8 @@ function listEntryPrompt (responseObj) {
 async function editAccountPrompt (responseObj) {
  Swal.fire({
   icon: 'info',
-  title: 'Edit Accounts',
-  target: pageSpecificTargetDiv,
+  title: 'Edit Account',
+  target: `#${pageSpecificTargetDiv}`,
   allowEscapeKey: true,
   customClass: {
    container: 'position-absolute lowerzindex'
@@ -135,6 +206,21 @@ async function editAccountPrompt (responseObj) {
   allowOutsideClick: true,
   showConfirmButton: false,
   html: await generateAccountEntryPrompt(responseObj).then((html) => {return html})
+ });
+}
+
+async function addAccountPrompt () {
+ Swal.fire({
+  icon: 'info',
+  title: 'Add Account',
+  target: `#${pageSpecificTargetDiv}`,
+  allowEscapeKey: true,
+  customClass: {
+   container: 'position-absolute lowerzindex'
+  },
+  allowOutsideClick: true,
+  showConfirmButton: false,
+  html: generateAddAccountPrompt().then((html) => {return html})
  });
 }
 
