@@ -4,12 +4,18 @@ const core = require('../../core/core');
 const validation = require('../../model/validation');
 const passport = require('passport');
 const Account = require('../../model/schemas').accountModel;
-const Entry = require('../../model/schemas').accountEntryModel;
-const List = require('../../model/schemas').listEntryModel;
+//const Entry = require('../../model/schemas').accountEntryModel;
+//const List = require('../../model/schemas').listEntryModel;
 const mongoose = require('mongoose');
 const crypto = require("crypto");
 
-router.post('/account', async (req, res) => {
+router.put('/account/uuid/:userInput', async (req, res) => {
+ let paramsVar = req.params.userInput;
+ await editAccountsResponse ('accountUUID',paramsVar,res);
+});
+
+/*
+router.put('/account/:userInput', async (req, res) => {
  try {
   let obj = req.body;
   if (!core.validateJSON(obj)) return res.send(400).send({"status":"failure","message":"Invalid JSON Object","timeStamp": Date.now(),"payload":[]});
@@ -50,8 +56,10 @@ router.post('/account', async (req, res) => {
   res.status(400).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
  }
 });
+*/
 
-router.post('/entry', async (req, res) => {
+/*
+router.put('/entry', async (req, res) => {
  try {
   let obj = req.body;
   if (!core.validateJSON(obj)) return res.send(400).send({"status":"failure","message":"Invalid JSON Object","timeStamp": Date.now(),"payload":[]});
@@ -91,7 +99,7 @@ router.post('/entry', async (req, res) => {
 });
 
 //THIS WILL UPDATE THE UUID AS WELL
-router.post('/list', async (req, res) => {
+router.put('/list', async (req, res) => {
  try {
   let arrayOfObjs = req.body;
   let errorMessage = "";
@@ -159,5 +167,5 @@ router.post('/list', async (req, res) => {
   res.status(400).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
  }
 });
-
+*/
 module.exports = router;

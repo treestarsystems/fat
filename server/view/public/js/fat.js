@@ -55,8 +55,8 @@ function capitalizeFirstCharacter (str) {
  }
 };
 
-function popupErrorHandler (errorString,targetDiv) {
- let errorMessage = ((errorString.message) ? errorString.message:errorString);
+function popupErrorHandler (error,targetDiv) {
+ let errorMessage = ((error.message) ? error.message:error);
  try {
   Swal.fire({
    icon: 'error',
@@ -70,20 +70,47 @@ function popupErrorHandler (errorString,targetDiv) {
    },
    html: `${errorMessage}<br><br><button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Close</button>`,
   });
+  return error;
  } catch (e) {
   return defaultErrorHandler(e);
- }
+ } finally {}
 }
 
-function defaultErrorHandler (errorString) {
+function defaultErrorHandler (error) {
  let returnObj = {"status": "","message": "","payload": ""};
  //This is done just incase you use the "throw" keyword to produce your own error.
- let errorMessage = ((errorString.message) ? errorString.message:errorString);
+ let errorMessage = ((error.message) ? error.message:error);
  returnObj.status = "failure";
  returnObj.message = `Function: ${arguments.callee.caller.name} - Error: ${errorMessage}`;
- returnObj.payload = errorString;
+ returnObj.payload = error;
  console.error(returnObj);
  return returnObj;
+}
+
+//Source: https://attacomsian.com/blog/javascript-check-variable-is-object
+function isObject (obj) {
+ if (Object.prototype.toString.call(obj) !== '[object Object]') return false;
+ return true;
+}
+
+//Source: https://attacomsian.com/blog/check-if-javascript-object-is-empty
+function isNonEmptyObject (obj) {
+ if (isObject(obj) == false) return false;
+ if (Object.keys(obj).length === 0) return false;
+ return true;
+}
+
+//Source: https://stackoverflow.com/a/9436948
+function isString (str) {
+ if (typeof str === 'string' || str instanceof String) return true;
+ return false;
+}
+
+//Source: https://stackoverflow.com/a/20956445
+function isNonEmptyArray (arr) {
+ if (!Array.isArray(arr)) return false;
+ if (arr.length == 0) return false;
+ return true;
 }
 
 showActiveNavigation();

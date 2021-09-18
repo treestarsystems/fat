@@ -3,12 +3,14 @@ const core = require('../core/core.js');
 
 //API Endpoints
 const add = require('./api/add');
+const edit = require('./api/edit');
 const remove = require('./api/remove');
 const get = require('./api/get');
 const user = require('./api/user');
 
 function apiEndpoint (app) {
  app.use('/api/add', add);
+ app.use('/api/edit', edit);
  app.use('/api/remove', remove);
  app.use('/api/get', get);
  app.use('/user', user);

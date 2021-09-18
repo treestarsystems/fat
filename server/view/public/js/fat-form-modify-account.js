@@ -20,7 +20,7 @@ var pageSpecificTargetDiv = 'modifyAccountBody';
   url: 'api/get/account/all',
  })
   .then((response) => {
-   if (response.data.status == 'faulire') {
+   if (response.data.status == 'failure') {
     throw response.data.message;
    }
    if (response.data.status == 'success') {
@@ -39,10 +39,34 @@ var pageSpecificTargetDiv = 'modifyAccountBody';
   });
 })();
 
-//Object received from server
-async function generateAccountEntryPrompt (obj) {
+function refreshAccountList () {
+ //Refresh list
+ axios({
+  method: 'get',
+  url: 'api/get/account/all',
+ })
+  .then((response) => {
+   if (response.data.status == 'failure') {
+    throw response.data.message;
+   }
+   if (response.data.status == 'success') {
+    if (response.data.totalRecords != 0) {
+     generateAccountItemsHTML(response.data.payload);
+    } else {
+     accountEntryPrompt(response.data);
+    }
+   }
+  })
+  .catch((e) => {
+   popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
+  });
+}
+
+//obj is received from server
+async function generateEditAccountEntryPrompt (obj) {
  let returnObj = {"status": "","message": "","payload": ""};
  try {
+  let containerID = 'accountItemContainer';
   let lists = await axios({
    method: 'get',
    url: 'api/get/list/all',
@@ -77,7 +101,7 @@ async function generateAccountEntryPrompt (obj) {
       <div class="row" style="margin-bottom: 5px;">
        <div class="col-md-12">
         <span class="d-block" style="font-size: 13px;display: unset !important;">${key.replace('account','')}:</span>
-        <input type="text" class="form-control" value="${payload[i][key]}">
+        <input type="text" class="form-control" value="${payload[i][key]}" id="${key}">
        </div>
       </div>
      `;
@@ -86,7 +110,7 @@ async function generateAccountEntryPrompt (obj) {
       <div class="row" style="margin-bottom: 5px;">
        <div class="col-md-12">
         <span class="d-block" style="font-size: 13px;display: unset !important;">${capitalizeFirstCharacter(key.replace('accountType','Account Type '))}:</span>
-        <select class="custom-select">
+        <select class="custom-select" id="${key}">
          ${generateOptions(lists.payload,key,obj.payload[0])}
         </select>
        </div>
@@ -98,7 +122,7 @@ async function generateAccountEntryPrompt (obj) {
   html += `
     <div class="row" style="margin-top:25px">
      <div class="col-md" style="text-align:center;">
-      <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="submitAccounts();"><i class="feather icon-check-circle"></i>&nbsp;Submit</button>
+      <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="submitAccounts('${containerID}','edit');"><i class="feather icon-check-circle"></i>&nbsp;Submit</button>
       <button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Cancel</button>
      </div>
     </div>
@@ -115,97 +139,91 @@ async function generateAccountEntryPrompt (obj) {
 
 //Object received from server
 async function generateAddAccountPrompt () {
- let lists = await axios({
-  method: 'get',
-  url: 'api/get/list/all',
- })
-  .then((response) => {
-   return response.data;
-  });
-console.log(lists);
- //Takes single list object;
- function generateOptions (obj,listName) {
-  let options = '';
-  for (let i = 0; i < obj.length; i++) {
-   if (listName == obj[i].listName) {
-    let sortedList = obj[i].list.sort();
-    for (let o = 0; o < sortedList.length; o++) {
-     options += `<option value="${sortedList[o]}">${sortedList[o].toUpperCase()}</option>`;
+ let returnObj = {"status": "","message": "","payload": ""};
+ try {
+  let containerID = 'accountItemContainer';
+  let lists = await axios({
+   method: 'get',
+   url: 'api/get/list/all',
+  })
+   .then((response) => {
+    return response.data;
+   })
+   .catch((e) => popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv));
+
+  //Takes an array of lists;
+  function generateOptions (arr,listName) {
+   if (!isNonEmptyArray(arr)) throw 'Invalid Array';
+   if (!isString(listName)) throw 'Invalid String';
+   let options = '';
+   for (let i = 0; i < arr.length; i++) {
+    if (listName == arr[i].listName) {
+     let sortedList = arr[i].list.sort();
+     for (let o = 0; o < sortedList.length; o++) {
+      options += `<option value="${sortedList[o]}">${sortedList[o].toUpperCase()}</option>`;
+     }
     }
    }
+   return options;
   }
-  return options;
- }
- let html = `<div id="accountItemContainer">`;
- let payload = {
-  accountTypePrimary:"",
-  accountTypeSecondary:"",
-  institution:""
- };
- for (let i = 0; i < payload.length; i++) {
-  let options;
-  for (let key in payload[i]) {
-   if (!key.match(/accountUUID|accountTypePrimary|accountTypeSecondary|institution|timeStamp/g)) {
-    html += `
-     <div class="row" style="margin-bottom: 5px;">
-      <div class="col-md-12">
-       <span class="d-block" style="font-size: 13px;display: unset !important;">${key.replace('account','')}:</span>
-       <input type="text" class="form-control" value="${payload[i][key]}">
-      </div>
-     </div>
-    `;
-   } else if (key.match(/institution|accountTypePrimary|accountTypeSecondary/g)){
-    html += `
-     <div class="row" style="margin-bottom: 5px;">
-      <div class="col-md-12">
-       <span class="d-block" style="font-size: 13px;display: unset !important;">${capitalizeFirstCharacter(key.replace('accountType','Account Type '))}:</span>
-       <select class="custom-select">
-        ${generateOptions(lists.payload,key)}
-       </select>
-      </div>
-     </div>
-    `;
+  let inputFields = ['accountName','accountDescription'];
+  let sortedLists = (() => {
+   if (lists.payload.length >= 1) {
+    return lists.payload.sort();
+   } else {
+    return [];
    }
-  }
- }
- html += `
-   <div class="row" style="margin-top:25px">
-    <div class="col-md" style="text-align:center;">
-     <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="submitAccounts();"><i class="feather icon-check-circle"></i>&nbsp;Submit</button>
-     <button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Cancel</button>
+  })();
+  let html = `<div id="${containerID}">`;
+  await inputFields.forEach((e,i) => {
+   html += `
+    <div class="row" style="margin-bottom: 5px;">
+     <div class="col-md-12">
+      <span class="d-block" style="font-size: 13px;display: unset !important;">${e.replace('account','')}:</span>
+      <input type="text" class="form-control" id="${e}">
+     </div>
     </div>
-   </div>
-  </div>`;
- return html;
+   `;
+  });
+  if (sortedLists.length == 0) {
+   throw 'Empty List Payload';
+  } else {
+   await sortedLists.forEach((e,i) => {
+    if (e.listName.match(/institution|accountTypePrimary|accountTypeSecondary/g)){
+     html += `
+      <div class="row" style="margin-bottom: 5px;">
+       <div class="col-md-12">
+        <span class="d-block" style="font-size: 13px;display: unset !important;">${capitalizeFirstCharacter(e.listName.replace('accountType','Account Type '))}:</span>
+        <select class="custom-select" id="${e.listName}">
+         ${generateOptions(sortedLists,e.listName)}
+        </select>
+       </div>
+      </div>
+     `;
+    }
+   });
+  }
+  html += `
+    <div class="row" style="margin-top:25px">
+     <div class="col-md" style="text-align:center;">
+      <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="submitAccounts('${containerID}','add');"><i class="feather icon-check-circle"></i>&nbsp;Submit</button>
+      <button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Cancel</button>
+     </div>
+    </div>
+   </div>`;
+  returnObj.status = "success";
+  returnObj.message = "success message";
+  returnObj.payload = html;
+  return returnObj;
+ } catch (e) {
+  return defaultErrorHandler(e);
+ } finally {}
 }
-
-/*
-function listEntryPrompt (responseObj) {
- Swal.fire({
-  icon: 'warning',
-  title: 'Missing Neceesary Accounts',
-  target: pageSpecificTargetDiv,
-  allowEscapeKey: false,
-  customClass: {
-   container: 'position-absolute lowerzindex'
-  },
-  allowOutsideClick: false,
-  showConfirmButton: false,
-  html: '' //generateAccountEntryPrompt(responseObj)
- });
- $(".js-example-tags").select2({tags: true,tokenSeparators: [',', ' ']});
- //On unselect event. Remove item from select dropdown
- $(".js-example-tags").on('select2:unselect',(e)=> {
-  let select = document.getElementById(e.target.id);
-  select.remove(e.params.data.element.index);
- });
-}
-*/
 
 async function editAccountPrompt (responseObj) {
  let returnObj = {"status": "","message": "","payload": ""};
  try {
-  let result = await generateAccountEntryPrompt(responseObj);
+  let result = await generateEditAccountEntryPrompt(responseObj);
   if (result.status == 'failure') {
    Swal.fire({
     icon: 'error',
@@ -239,59 +257,184 @@ async function editAccountPrompt (responseObj) {
   returnObj.payload = "";
   return returnObj;
  } catch (e) {
-  return popupErrorHandler(defaultErrorHandler(e));
+  return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
  } finally {}
 }
 
 async function addAccountPrompt () {
- Swal.fire({
-  icon: 'info',
-  title: 'Add Account',
-  target: `#${pageSpecificTargetDiv}`,
-  allowEscapeKey: true,
-  customClass: {
-   container: 'position-absolute lowerzindex'
-  },
-  allowOutsideClick: true,
-  showConfirmButton: false,
-  html: await generateAddAccountPrompt()
- });
+ let returnObj = {"status": "","message": "","payload": ""};
+ try {
+  let result = await generateAddAccountPrompt();
+  if (result.status == 'failure') {
+   Swal.fire({
+    icon: 'error',
+    title: 'Error Generating Prompt',
+    target: `#${pageSpecificTargetDiv}`,
+    allowEscapeKey: true,
+    customClass: {
+      container: 'position-absolute lowerzindex'
+    },
+    allowOutsideClick: true,
+    showConfirmButton: false,
+    html: `Error: ${result.message}`
+   });
+  }
+  if (result.status == 'success') {
+   Swal.fire({
+    icon: 'info',
+    title: 'Add Account',
+    target: `#${pageSpecificTargetDiv}`,
+    allowEscapeKey: true,
+    customClass: {
+     container: 'position-absolute lowerzindex'
+    },
+    allowOutsideClick: true,
+    showConfirmButton: false,
+    html: result.payload
+   });
+  }
+ } catch (e) {
+  return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
+ } finally {}
 }
 
 function generateAccountItemsHTML(arrayOfAccountObjs) {
- let pageSpecificTargetDiv = document.getElementById('currentAccountsDiv');
- let pageSpecificTargetDivHTML = '';
- function accountItemTemplate (obj) {
-  let objString = JSON.stringify(obj);
-  let html = `
-   <div class="card-block border-bottom">
-    <div class="row d-flex align-items-center">
-     <div class="col">
-      <h3 id="name_${obj.accountUUID}" class="f-w-300">${obj.accountName}</h3>
-      <span id="type_primary_${obj.accountUUID}" class="d-block">Primary Type: ${obj.accountTypePrimary.toUpperCase()}</span>
-      <span id="type_secondary_${obj.accountUUID}" class="d-block">Secondary Type: ${obj.accountTypeSecondary.toUpperCase()}</span>
-      <span id="institution_${obj.accountUUID}" class="d-block">Institution: ${obj.institution.toUpperCase()}</span>
-      <span id="description_${obj.accountUUID}" class="d-block">Description: ${obj.accountDescription}</span>
-     </div>
-     <div class="col-auto">
-      <i class="feather icon-edit f-30 text-c-blue" style="cursor: pointer;" onclick="editAccountItem('${obj.accountUUID}');"></i>
-       &nbsp;
-       &nbsp;
-      <i class="feather icon-trash-2 f-30 text-c-red" style="cursor: pointer;"onclick="deleteAccountItem('${obj.accountUUID}')"></i>
-     </div>
+ let returnObj = {"status": "","message": "","payload": ""};
+ try {
+  if (!isNonEmptyArray(arrayOfAccountObjs)) throw 'Invalid Array';
+  let pageSpecificTargetDiv = document.getElementById('currentAccountsDiv');
+  let pageSpecificTargetDivHTML = '';
+
+//.... Continue from here adding error checks
+
+  function accountItemTemplate (obj) {
+   if (!isNonEmptyObject(obj)) throw 'Invalid Object';
+   let objString = JSON.stringify(obj);
+   let html = `
+    <div class="card-block border-bottom">
+     <div class="row d-flex align-items-center">
+      <div class="col">
+       <h3 id="name_${obj.accountUUID}" class="f-w-300">${obj.accountName}</h3>
+       <span id="type_primary_${obj.accountUUID}" class="d-block">Primary Type: ${obj.accountTypePrimary.toUpperCase()}</span>
+       <span id="type_secondary_${obj.accountUUID}" class="d-block">Secondary Type: ${obj.accountTypeSecondary.toUpperCase()}</span>
+       <span id="institution_${obj.accountUUID}" class="d-block">Institution: ${obj.institution.toUpperCase()}</span>
+       <span id="description_${obj.accountUUID}" class="d-block">Description: ${obj.accountDescription}</span>
+      </div>
+      <div class="col-auto">
+       <i class="feather icon-edit f-30 text-c-blue" style="cursor: pointer;" onclick="editAccountItem('${obj.accountUUID}');"></i>
+        &nbsp;
+        &nbsp;
+       <i class="feather icon-trash-2 f-30 text-c-red" style="cursor: pointer;"onclick="deleteAccountItem('${obj.accountUUID}')"></i>
+      </div>
+      </div>
     </div>
-   </div>
-  `;
-  return html;
- }
- for (let i = 0; i < arrayOfAccountObjs.length; i++) {
-  pageSpecificTargetDivHTML += accountItemTemplate(arrayOfAccountObjs[i]);
- }
- pageSpecificTargetDiv.innerHTML = pageSpecificTargetDivHTML;
+   `;
+   return html;
+  }
+  for (let i = 0; i < arrayOfAccountObjs.length; i++) {
+   pageSpecificTargetDivHTML += accountItemTemplate(arrayOfAccountObjs[i]);
+  }
+  pageSpecificTargetDiv.innerHTML = pageSpecificTargetDivHTML;
+  returnObj.status = "success";
+  returnObj.message = "success message";
+  returnObj.payload = pageSpecificTargetDivHTML;
+  return returnObj;
+ } catch (e) {
+  return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
+ } finally {}
 }
 
-function submitAccounts(containerDivID) {
- let containingDiv = document.getElementById(containerDivID);
+async function submitAccounts(containerDivID,type) {
+ let returnObj = {"status": "","message": "","payload": ""};
+ try {
+  let containerID = 'accountItemContainer';
+  let containingDiv = document.getElementById(containerDivID);
+  let fields = Array.from(containingDiv.querySelectorAll('input , select'));
+  let submissionObj = (async () => {
+   let resultObj = {}
+   await fields.forEach((e,i) => {
+    if (e.value == "") throw 'Please Fill In All Fields'
+    resultObj[e.id] = e.value;
+   });
+   return resultObj;
+  });
+  returnObj.status = "success";
+  returnObj.message = "success message";
+  returnObj.payload = await submissionObj();
+  if (type == 'add') {
+   axios({
+    method: 'post',
+    url: 'api/add/account',
+    data: returnObj.payload
+   })
+    .then((response) => {
+     let toastOptions = {
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+       toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+     }
+     if (response.data.status == 'failure') {
+      toastOptions['icon'] = 'error';
+      toastOptions['title'] = response.data.message;
+      Swal.fire(toastOptions);
+     }
+     if (response.data.status == 'success') {
+      toastOptions['icon'] = 'success';
+      toastOptions['title'] = response.data.message;
+      Swal.fire(toastOptions);
+      refreshAccountList();
+     }
+    })
+    .catch((e) => {
+     popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
+    });
+  }
+//An API endpoint needs to be added for this functionality.
+  if (type == 'edit') {
+   axios({
+    method: 'put',
+    url: 'api/edit/account',
+    data: returnObj.payload
+   })
+    .then((response) => {
+     let toastOptions = {
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+       toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+     }
+     if (response.data.status == 'failure') {
+      toastOptions['icon'] = 'error';
+      toastOptions['title'] = response.data.message;
+      Swal.fire(toastOptions);
+     }
+     if (response.data.status == 'success') {
+      toastOptions['icon'] = 'success';
+      toastOptions['title'] = response.data.message;
+      Swal.fire(toastOptions);
+      refreshAccountList();
+     }
+    })
+    .catch((e) => {
+     popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
+    });
+  }
+  return returnObj;
+ } catch (e) {
+  return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
+ } finally {}
+/*
  let allDivSelectElements = containingDiv.querySelectorAll('select');
  let arrayOfAccountsObjs = [];
  let validationCheck = {
@@ -335,6 +478,7 @@ function submitAccounts(containerDivID) {
   .then((response) => {
    console.log(response)
   });
+*/
 }
 
 function editAccountItem (accountUUID) {
@@ -349,3 +493,4 @@ function editAccountItem (accountUUID) {
    }
   })
 }
+
