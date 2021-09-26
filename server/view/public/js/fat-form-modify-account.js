@@ -21,7 +21,8 @@ var pageSpecificTargetDiv = 'modifyAccountBody';
  })
   .then((response) => {
    if (response.data.status == 'failure') {
-    throw response.data.message;
+    defaultErrorHandler(response.data.message);
+    addAccountPrompt();
    }
    if (response.data.status == 'success') {
     if (response.data.totalRecords != 0) {
@@ -30,6 +31,8 @@ var pageSpecificTargetDiv = 'modifyAccountBody';
      Swal.fire(toastOptions)
      generateAccountItemsHTML(response.data.payload);
     } else {
+//This function does not exist. May need to be replaced with
+//     addAccountPrompt();
      accountEntryPrompt(response.data);
     }
    }
@@ -47,13 +50,14 @@ function refreshAccountList () {
  })
   .then((response) => {
    if (response.data.status == 'failure') {
-    throw response.data.message;
+    defaultErrorHandler(response.data.message);
+    addAccountPrompt();
    }
    if (response.data.status == 'success') {
     if (response.data.totalRecords != 0) {
      generateAccountItemsHTML(response.data.payload);
     } else {
-     accountEntryPrompt(response.data);
+     addAccountPrompt();
     }
    }
   })
@@ -139,7 +143,7 @@ async function generateEditAccountEntryPrompt (obj) {
 
 //Object received from server
 async function generateAddAccountPrompt () {
- let returnObj = {"status": "","message": "","payload": ""};
+ let returnObj = {"status": "success","message": "success","payload": ""};
  try {
   let containerID = 'accountItemContainer';
   let lists = await axios({
@@ -211,8 +215,6 @@ async function generateAddAccountPrompt () {
      </div>
     </div>
    </div>`;
-  returnObj.status = "success";
-  returnObj.message = "success message";
   returnObj.payload = html;
   return returnObj;
  } catch (e) {
@@ -488,9 +490,40 @@ function editAccountItem (accountUUID) {
   url: `api/get/account/uuid/${accountUUID}`,
  })
   .then(async (response) => {
+   if (response.data.status == "failure") {
+    popupErrorHandler(defaultErrorHandler(response.data.message),pageSpecificTargetDiv);
+   }
    if (response.data.status == "success") {
     await editAccountPrompt(response.data);
    }
   })
+  .catch((e) => {
+   popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
+  });
+}
+
+async function deleteAccountItem (accountUUID) {
+ let responseObj = {"status":"success","message":"success","payload":""}
+ try {
+  //Fetch list data from API endpoint
+  let deleteResponse = await axios({
+   method: 'delete',
+   url: `api/remove/account/uuid/${accountUUID}`,
+  })
+   .then(async (response) => {
+console.log(response.data)
+    if (response.data.status == "success") {
+     defaultToastNotification({title:`${response.data.message}`,icon:'success'});
+     setTimeout(() => {},2000);
+     refreshAccountList();
+    }
+    if (response.data.status == "failure") {
+     defaultToastNotification({title:`${response.data.message}`,icon:'error',timer:2000});
+     throw response.data.message;
+    }
+   });
+ } catch (e) {
+  defaultErrorHandler(e);
+ } finally {}
 }
 

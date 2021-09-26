@@ -27,6 +27,7 @@
 /**  =====================
      Dark css start
 ==========================  **/
+/* @import sweetalert2-dark.min.css; */
 body {
   color: #adb7be;
   background: #212224;

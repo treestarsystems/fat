@@ -16,8 +16,8 @@ async function getAccountsResponse (reqParamsString,reqParamsVariable,callback) 
  try {
   //Check if accountType exists
   const getAccountResult = await Account.find(queryObj,{_id:0,__v:0});
-  if (!getAccountResult) return callback.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
-  if (getAccountResult.length == 0) return callback.status(400).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
+  if (!getAccountResult) return callback.status(200).send({"status":"failure","message":"No Matching Account(s) Exist","timeStamp":Date.now(),"payload":[]});
+  if (getAccountResult.length == 0) return callback.status(200).send({"status":"failure","message":"No Account(s) Exist","timeStamp":Date.now(),"payload":[]});
   let getAccountResultCount = 0;
   getAccountResultCount = await Account.countDocuments(queryObj, (err, count) => {
    if (err) return err;
@@ -32,7 +32,7 @@ async function getAccountsResponse (reqParamsString,reqParamsVariable,callback) 
   });
  } catch (err) {
   console.log(`get:account:${reqParamsString}:`,err)
-  callback.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
+  callback.status(200).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
 }
 
@@ -71,7 +71,7 @@ router.get('/coinbase/raw', (req, res) => {
   coinbaseCustom.getAccountsCustomLiveRaw(res);
  } catch (err) {
   console.log('/coinbase/raw:',err)
-  res.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
+  res.status(200).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
 });
 
@@ -80,7 +80,7 @@ router.get('/coinbase/filtered', (req, res) => {
   coinbaseCustom.getAccountsCustomLiveFiltered(res);
  } catch (err) {
   console.log('/coinbase/filtered:',err)
-  res.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
+  res.status(200).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
 });
 
@@ -91,8 +91,8 @@ async function getEntriesResponse (reqParamsString,reqParamsVariable,callback) {
  try {
   //Check if entries exists
   const getEntryResult = await Entry.find(queryObj,{_id:0,__v:0});
-  if (!getEntryResult) return callback.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
-  if (getEntryResult.length == 0) return callback.status(400).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
+  if (!getEntryResult) return callback.status(200).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
+  if (getEntryResult.length == 0) return callback.status(200).send({"status":"failure","message":"No Matching Entry(s) Exist","timeStamp":Date.now(),"payload":[]});
   let getEntryResultCount = 0;
   getEntryResultCount = await Entry.countDocuments(queryObj, (err, count) => {
    if (err) return err;
@@ -108,7 +108,7 @@ async function getEntriesResponse (reqParamsString,reqParamsVariable,callback) {
   });
  } catch (err) {
   console.log(`get:entry:${reqParamsString}`, err)
-  callback.status(400).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
+  callback.status(200).send({"status":"failure","message":'failure',"timeStamp":Date.now(),"payload":[err]});
  }
 }
 

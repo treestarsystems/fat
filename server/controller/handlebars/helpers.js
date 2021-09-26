@@ -16,7 +16,8 @@ function registerHelpers (hbs) {
   if (currentHour >= 6 && currentHour <= 20) {
    return html;
   } else {
-   html = '<link rel="stylesheet" href="public/css/dark.css">';
+   html += '<link rel="stylesheet" href="public/css/dark.css">';
+   html += '<link rel="stylesheet" href="public/css/sweetalert2-dark.min.css">';
    return html;
   }
  })

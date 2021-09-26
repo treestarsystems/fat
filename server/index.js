@@ -14,7 +14,7 @@ const app = express();
 const core = require('./core/core.js');
 const system = require('../system_confs/system_vars.json');
 const jobs = require('./core/cronJobs.js').jobs;
-const handlebarsHelperFunctions = require('./view/handlebars/helpers.js');
+const handlebarsHelperFunctions = require('./controller/handlebars/helpers.js');
 const routes = require('./controller/routes.js');
 const appSpecificCode = require('./app.js');
 

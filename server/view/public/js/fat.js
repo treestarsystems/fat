@@ -113,5 +113,26 @@ function isNonEmptyArray (arr) {
  return true;
 }
 
+function defaultToastNotification (options) {
+ try {
+  let defaultToastOptions = {
+   toast: true,
+   icon: (options.icon ? options.icon:'info'),
+   title: (options.title ? options.title:'No Message Set'),
+   position: 'top-end',
+   showConfirmButton: false,
+   timer: (options.timer ? options.timer:1000),
+   timerProgressBar: (options.timerProgressBar ? options.timerProgressBar:true),
+   didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+   }
+  }
+  Swal.fire(defaultToastOptions);
+ } catch (e) {
+  defaultErrorHandler(e);
+ } finally {}
+}
+
 showActiveNavigation();
 
