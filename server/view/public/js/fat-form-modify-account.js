@@ -122,15 +122,15 @@ async function generateEditAccountEntryPrompt (obj) {
      `;
     }
    }
-  }
-  html += `
+   html += `
     <div class="row" style="margin-top:25px">
      <div class="col-md" style="text-align:center;">
-      <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="submitAccounts('${containerID}','edit');"><i class="feather icon-check-circle"></i>&nbsp;Submit</button>
+      <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="submitAccounts('${containerID}','edit','${payload[i].accountUUID}');"><i class="feather icon-check-circle"></i>&nbsp;Submit</button>
       <button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Cancel</button>
      </div>
     </div>
    </div>`;
+  }
   returnObj.status = "success";
   returnObj.message = "success message";
   returnObj.payload = html;
@@ -222,7 +222,7 @@ async function generateAddAccountPrompt () {
  } finally {}
 }
 
-async function editAccountPrompt (responseObj) {
+async function editAccountPrompt (responseObj,accountUUID) {
  let returnObj = {"status": "","message": "","payload": ""};
  try {
   let result = await generateEditAccountEntryPrompt(responseObj);
@@ -300,7 +300,8 @@ async function addAccountPrompt () {
  } finally {}
 }
 
-function generateAccountItemsHTML(arrayOfAccountObjs) {
+function generateAccountItemsHTML (arrayOfAccountObjs) {
+console.log(arrayOfAccountObjs)
  let returnObj = {"status": "","message": "","payload": ""};
  try {
   if (!isNonEmptyArray(arrayOfAccountObjs)) throw 'Invalid Array';
@@ -346,7 +347,7 @@ function generateAccountItemsHTML(arrayOfAccountObjs) {
  } finally {}
 }
 
-async function submitAccounts(containerDivID,type) {
+async function submitAccounts(containerDivID,type,accountUUID) {
  let returnObj = {"status": "","message": "","payload": ""};
  try {
   let containerID = 'accountItemContainer';
@@ -358,6 +359,7 @@ async function submitAccounts(containerDivID,type) {
     if (e.value == "") throw 'Please Fill In All Fields'
     resultObj[e.id] = e.value;
    });
+   if (type == 'edit') resultObj['accountUUID'] = accountUUID;
    return resultObj;
   });
   returnObj.status = "success";
@@ -399,6 +401,7 @@ async function submitAccounts(containerDivID,type) {
   }
 //An API endpoint needs to be added for this functionality.
   if (type == 'edit') {
+console.log(returnObj.payload)
    axios({
     method: 'put',
     url: 'api/edit/account',
@@ -494,7 +497,7 @@ function editAccountItem (accountUUID) {
     popupErrorHandler(defaultErrorHandler(response.data.message),pageSpecificTargetDiv);
    }
    if (response.data.status == "success") {
-    await editAccountPrompt(response.data);
+    await editAccountPrompt(response.data,accountUUID);
    }
   })
   .catch((e) => {
@@ -506,12 +509,11 @@ async function deleteAccountItem (accountUUID) {
  let responseObj = {"status":"success","message":"success","payload":""}
  try {
   //Fetch list data from API endpoint
-  let deleteResponse = await axios({
+ let deleteResponse = await axios({
    method: 'delete',
    url: `api/remove/account/uuid/${accountUUID}`,
   })
    .then(async (response) => {
-console.log(response.data)
     if (response.data.status == "success") {
      defaultToastNotification({title:`${response.data.message}`,icon:'success'});
      setTimeout(() => {},2000);

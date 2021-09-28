@@ -2,6 +2,29 @@
 const core = require('../core/core.js');
 const joi = require('joi');
 
+const accountValidationEdit = joi.object({
+ accountName: joi.string()
+  .alphanum()
+  .min(3)
+  .max(255)
+  .label('Account Name')
+  .required(),
+ accountDescription: joi.string()
+  .label('Account Description'),
+ accountTypePrimary: joi.string()
+  .label('Account Type Primary')
+  .required(),
+ accountTypeSecondary: joi.string()
+  .label('Account Type Secondary')
+  .required(),
+ institution: joi.string()
+  .label('Institution')
+  .required(),
+ accountUUID: joi.string()
+  .label('AccountUUID')
+  .required()
+});
+
 const accountValidation = joi.object({
  accountName: joi.string()
   .alphanum()
@@ -96,6 +119,7 @@ const loginValidation = joi.object({
 
 module.exports = {
  accountValidation,
+ accountValidationEdit,
  accountEntryValidation,
  listEntryValidation,
  registerValidation,

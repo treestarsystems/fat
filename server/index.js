@@ -21,7 +21,7 @@ const appSpecificCode = require('./app.js');
 //Main connection to DB
 mongoose.connect(
   core.coreVars.dbServer,
-  {useNewUrlParser: true,useUnifiedTopology: true}
+  {useNewUrlParser: true,useUnifiedTopology: true,useFindAndModify: false}
  )
  .then(() => console.log(`${core.coreVars.projectName}|${process.env.pm_id}: App\'s MongoDB connection established!`))
  .catch((err) => console.log(err));

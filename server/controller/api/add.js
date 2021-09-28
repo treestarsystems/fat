@@ -12,7 +12,7 @@ const crypto = require("crypto");
 router.post('/account', async (req, res) => {
  try {
   let obj = req.body;
-  if (!core.validateJSON(obj)) return res.send(400).send({"status":"failure","message":"Invalid JSON Object","timeStamp": Date.now(),"payload":[]});
+  if (!core.validateJSON(obj)) return res.send(200).send({"status":"failure","message":"Invalid JSON Object","timeStamp": Date.now(),"payload":[]});
   //Validate input
   const {error} = validation.accountValidation.validate(obj,{abortEarly:false});
   if (error) {
@@ -20,18 +20,19 @@ router.post('/account', async (req, res) => {
    error.details.forEach((e,i) => {
     message += `${e.message}. <br><br>`;
    });
-   return res.status(400).send({"status":"failure","message":message,"timeStamp": Date.now(),"payload":[]});
+   return res.status(200).send({"status":"failure","message":message,"timeStamp": Date.now(),"payload":[]});
   }
   //Check if username or email exists
   const accountExists = await Account.findOne({accountName: obj.accountName.toUpperCase(),accountType: obj.accountType,institution: obj.institution});
-  if (accountExists) return res.status(400).send({"status":"failure","message":"Matching Account Already Exists","timeStamp": Date.now(),"payload":[]});
+  if (accountExists) return res.status(200).send({"status":"failure","message":"Matching Account Already Exists","timeStamp": Date.now(),"payload":[]});
   //Define object to be saved.
   const accountObj = new Account({
    accountName: obj.accountName.toUpperCase(),
    accountTypePrimary: obj.accountTypePrimary,
    accountTypeSecondary: obj.accountTypeSecondary,
    accountDescription: (obj.accountDescription? obj.accountDescription : ''),
-   institution: obj.institution
+   institution: obj.institution,
+   accountUUID: (obj.accountUUID ? obj.accountUUID:undefined)
   });
   //Save object
   accountObj.save()
@@ -44,17 +45,17 @@ router.post('/account', async (req, res) => {
     });
    })
    .catch((err) => {
-    res.status(400).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
+    res.status(200).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
    });
  } catch (err) {
-  res.status(400).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
+  res.status(200).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
  }
 });
 
 router.post('/entry', async (req, res) => {
  try {
   let obj = req.body;
-  if (!core.validateJSON(obj)) return res.send(400).send({"status":"failure","message":"Invalid JSON Object","timeStamp": Date.now(),"payload":[]});
+  if (!core.validateJSON(obj)) return res.send(200).send({"status":"failure","message":"Invalid JSON Object","timeStamp": Date.now(),"payload":[]});
   //Validate input
   const {error} = validation.accountEntryValidation.validate(obj,{abortEarly:false});
   if (error) {
@@ -62,7 +63,7 @@ router.post('/entry', async (req, res) => {
    error.details.forEach((e,i) => {
     message += `${e.message}. <br><br>`;
    });
-   return res.status(400).send({"status":"failure","message":message,"timeStamp": Date.now(),"payload":[]});
+   return res.status(200).send({"status":"failure","message":message,"timeStamp": Date.now(),"payload":[]});
   }
   //Define object to be saved.
   const entryObj = new Entry({
@@ -83,10 +84,10 @@ router.post('/entry', async (req, res) => {
     });
    })
    .catch((err) => {
-    res.status(400).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
+    res.status(200).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
    });
  } catch (err) {
-  res.status(400).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
+  res.status(200).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
  }
 });
 
@@ -105,7 +106,7 @@ router.post('/list', async (req, res) => {
    }
   }
   if (errorMessage) {
-   return res.status(400).send({
+   return res.status(200).send({
     "status":"failure",
     "message":`${errorMessage} <br><br>No Lists Have Been Saved. <br><br>`,
     "timeStamp": Date.now(),
@@ -138,7 +139,7 @@ router.post('/list', async (req, res) => {
       }
       if (arrayOfObjs.length-1 == i) {
        if (queryFailureCount > 0) {
-        res.status(400).send({
+        res.status(200).send({
          "status":"failure",
          "message":`Failure(${queryFailureCount}): <br>${queryFailureMessage}<br><br>Success(${querySuccessCount}): <br>${querySuccessMessage}`,
          "timeStamp": Date.now(),
@@ -156,7 +157,7 @@ router.post('/list', async (req, res) => {
     });
   }
  } catch (err) {
-  res.status(400).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
+  res.status(200).send({"status":"failure","message":"failure","timeStamp": Date.now(),"payload":[err]});
  }
 });
 

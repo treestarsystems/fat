@@ -9,9 +9,55 @@ const Account = require('../../model/schemas').accountModel;
 const mongoose = require('mongoose');
 const crypto = require("crypto");
 
+/*
 router.put('/account/uuid/:userInput', async (req, res) => {
  let paramsVar = req.params.userInput;
  await editAccountsResponse ('accountUUID',paramsVar,res);
+});
+*/
+
+router.put('/account', async (req, res) => {
+ try {
+  let obj = req.body;
+  if (!core.validateJSON(obj)) return res.status(200).send({"status":"failure","message":"Invalid JSON Object","timeStamp": Date.now(),"payload":[]});
+  //Validate input
+  const {error} = validation.accountValidationEdit.validate(obj,{abortEarly:false});
+  if (error) {
+   let message = "";
+   error.details.forEach((e,i) => {
+    message += `${e.message}. <br><br>`;
+   });
+   return res.status(200).send({"status":"failure","message":message,"timeStamp": Date.now(),"payload":[]});
+  }
+  //Check if account exists
+  const accountExists = await Account.findOne({accountUUID: obj.accountUUID});
+  if (accountExists == null) return res.status(200).send({"status":"failure","message":"No Matching Account Exists","timeStamp": Date.now(),"payload":[]});
+  //Define object to be saved.
+  const accountObj = {
+   accountName: obj.accountName.toUpperCase(),
+   accountTypePrimary: obj.accountTypePrimary,
+   accountTypeSecondary: obj.accountTypeSecondary,
+   accountDescription: (obj.accountDescription? obj.accountDescription : ''),
+   institution: obj.institution,
+   timeStamp: Date.now()
+  };
+  //Update object
+  Account.findOneAndUpdate({accountUUID: obj.accountUUID}, accountObj, {new:true})
+   .then(async (account) => {
+    let currentAccountData = await Account.findOne({accountUUID: obj.accountUUID},{_id:0,__v:0});
+    res.status(200).send({
+     "status":"success",
+     "message":"Account has been successfully updated",
+     "timeStamp": Date.now(),
+     "payload":currentAccountData,
+    });
+   })
+   .catch((err) => {
+    res.status(200).send({"status":"failure","message":err.message,"timeStamp": Date.now(),"payload":[err.message]});
+   });
+ } catch (err) {
+  res.status(200).send({"status":"failure","message":err.message,"timeStamp": Date.now(),"payload":[err.message]});
+ }
 });
 
 /*

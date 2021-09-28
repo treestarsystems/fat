@@ -45,7 +45,7 @@ function generateListEntryPrompt (obj) {
    <div class="row" style="margin-bottom: 5px;">
     <div class="col-md-12">
      <span class="d-block" style="font-size: 13px;display: unset !important;" id="${payload[i].listName}Title">${payload[i].listNameLong}:</span>
-     <select id="${payload[i].listName}" class="js-example-tags col-sm-12" multiple="multiple" ${(payload[i].listName.match(/accessLevelList|accountTypePrimary/g) ? 'disabled':'')}>
+     <select id="${payload[i].listName}" class="js-example-tags col-sm-12" multiple="multiple" ${(payload[i].listName.match(/accessLevelList|accountTypePrimary/g) ? 'zdisabled':'')}>
       ${options}
      </select>
     </div>
@@ -64,7 +64,7 @@ if (obj.missingLists) {
    <div class="row" style="margin-bottom: 5px;">
     <div class="col-md-12">
      <span class="d-block" style="font-size: 13px;display: unset !important;" id="${missingLists[i]}Title">${listNameLong}:</span>
-     <select id="${missingLists[i]}" class="js-example-tags col-sm-12" multiple="multiple" ${(missingLists[i].match(/accessLevelList|accountTypePrimary/g) ? 'disabled':'')}>
+     <select id="${missingLists[i]}" class="js-example-tags col-sm-12" multiple="multiple" ${(missingLists[i].match(/accessLevelList|accountTypePrimary/g) ? 'zdisabled':'')}>
      </select>
     </div>
    </div>
