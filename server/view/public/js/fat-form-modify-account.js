@@ -301,7 +301,6 @@ async function addAccountPrompt () {
 }
 
 function generateAccountItemsHTML (arrayOfAccountObjs) {
-console.log(arrayOfAccountObjs)
  let returnObj = {"status": "","message": "","payload": ""};
  try {
   if (!isNonEmptyArray(arrayOfAccountObjs)) throw 'Invalid Array';
@@ -401,7 +400,6 @@ async function submitAccounts(containerDivID,type,accountUUID) {
   }
 //An API endpoint needs to be added for this functionality.
   if (type == 'edit') {
-console.log(returnObj.payload)
    axios({
     method: 'put',
     url: 'api/edit/account',
