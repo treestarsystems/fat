@@ -24,9 +24,10 @@ var pageSpecificTargetDiv = 'modifyEntryBody';
     defaultErrorHandler(response.data.message);
     addEntryPrompt();
    }
-/*
    if (response.data.status == 'success') {
     if (response.data.totalRecords != 0) {
+     //Show Filter Button
+     document.getElementById('filterIcon').classList.remove('d-none')
      toastOptions['icon'] = 'success';
      toastOptions['title'] = 'Entries Loaded';
      Swal.fire(toastOptions)
@@ -35,7 +36,6 @@ var pageSpecificTargetDiv = 'modifyEntryBody';
 //     accountEntryPrompt(response.data);
     }
    }
-*/
   })
   .catch((e) => {
    return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
