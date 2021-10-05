@@ -11,7 +11,7 @@
     "jsonstatus-instance": "server/service.js -j",
     "delete-instance": "server/service.js -d",
     "reload-instance": "server/service.js -r",
-    "log-instance": "pm2 log onboarding"
+    "log-instance": "pm2 log fat"
    },
    "repository": {
       "type": "git",

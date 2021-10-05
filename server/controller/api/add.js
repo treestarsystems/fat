@@ -70,7 +70,8 @@ router.post('/entry', async (req, res) => {
    accountUUID: obj.accountUUID,
    entryDescription: (obj.entryDescription? obj.entryDescription : ''),
    entryType: obj.entryType,
-   balance: (obj.balance? obj.balance: 0)
+   value: (obj.value? obj.value: 0),
+   entryUUID: undefined
   });
   //Save object
   entryObj.save()

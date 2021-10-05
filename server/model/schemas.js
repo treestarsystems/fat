@@ -74,7 +74,7 @@ const accountEntrySchema = new mongoose.Schema({
   required: true,
   max: 255
  },
- balance: {
+ value: {
   type: Number,
   required: true
  },

@@ -1,4 +1,4 @@
-var pageSpecificTargetDiv = 'modifyAccountBody';
+var pageSpecificTargetDiv = 'modifyEntryBody';
 
 (() => {
  awaitResponse(pageSpecificTargetDiv);
@@ -17,31 +17,150 @@ var pageSpecificTargetDiv = 'modifyAccountBody';
  //Fetch list data from API endpoint
  axios({
   method: 'get',
-  url: 'api/get/account/all',
+  url: 'api/get/entry/alls',
  })
   .then((response) => {
    if (response.data.status == 'failure') {
     defaultErrorHandler(response.data.message);
-    addAccountPrompt();
+    addEntryPrompt();
    }
+/*
    if (response.data.status == 'success') {
     if (response.data.totalRecords != 0) {
      toastOptions['icon'] = 'success';
-     toastOptions['title'] = 'Accounts Loaded';
+     toastOptions['title'] = 'Entries Loaded';
      Swal.fire(toastOptions)
-     generateAccountItemsHTML(response.data.payload);
+//     generateAccountItemsHTML(response.data.payload);
     } else {
-//This function does not exist. May need to be replaced with
-//     addAccountPrompt();
-     accountEntryPrompt(response.data);
+//     accountEntryPrompt(response.data);
     }
    }
+*/
   })
   .catch((e) => {
    return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
   });
 })();
 
+async function addEntryPrompt () {
+ let returnObj = {"status": "","message": "","payload": ""};
+ try {
+  let result = await generateAddEntryPrompt();
+  if (result.status == 'failure') {
+   Swal.fire({
+    icon: 'error',
+    title: 'Error Generating Prompt',
+    target: `#${pageSpecificTargetDiv}`,
+    allowEscapeKey: true,
+    customClass: {
+      container: 'position-absolute lowerzindex'
+    },
+    allowOutsideClick: true,
+    showConfirmButton: false,
+    html: `Error: ${result.message}`
+   });
+  }
+  if (result.status == 'success') {
+   Swal.fire({
+    icon: 'info',
+    title: 'Add Entry',
+    target: `#${pageSpecificTargetDiv}`,
+    allowEscapeKey: true,
+    customClass: {
+     container: 'position-absolute lowerzindex'
+    },
+    allowOutsideClick: true,
+    showConfirmButton: false,
+    html: result.payload
+   });
+  }
+ } catch (e) {
+  return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
+ } finally {}
+}
+
+//Object received from server
+async function generateAddEntryPrompt () {
+ let returnObj = {"status": "success","message": "success","payload": ""};
+ try {
+  let containerID = 'accountEntriesItemContainer';
+  let lists = await axios({
+   method: 'get',
+   url: 'api/get/list/all',
+  })
+   .then((response) => {
+    return response.data;
+   })
+   .catch((e) => popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv));
+
+  //Takes an array of lists;
+  function generateOptions (arr,listName) {
+   if (!isNonEmptyArray(arr)) throw 'Invalid Array';
+   if (!isString(listName)) throw 'Invalid String';
+   let options = '';
+   for (let i = 0; i < arr.length; i++) {
+    if (listName == arr[i].listName) {
+     let sortedList = arr[i].list.sort();
+     for (let o = 0; o < sortedList.length; o++) {
+      options += `<option value="${sortedList[o]}">${sortedList[o].toUpperCase()}</option>`;
+     }
+    }
+   }
+   return options;
+  }
+  let inputFields = ['accountName','accountDescription'];
+  let sortedLists = (() => {
+   if (lists.payload.length >= 1) {
+    return lists.payload.sort();
+   } else {
+    return [];
+   }
+  })();
+  let html = `<div id="${containerID}">`;
+  await inputFields.forEach((e,i) => {
+   html += `
+    <div class="row" style="margin-bottom: 5px;">
+     <div class="col-md-12">
+      <span class="d-block" style="font-size: 13px;display: unset !important;">${e.replace('account','')}:</span>
+      <input type="text" class="form-control" id="${e}">
+     </div>
+    </div>
+   `;
+  });
+  if (sortedLists.length == 0) {
+   throw 'Empty List Payload';
+  } else {
+   await sortedLists.forEach((e,i) => {
+    if (e.listName.match(/institution|accountTypePrimary|accountTypeSecondary/g)){
+     html += `
+      <div class="row" style="margin-bottom: 5px;">
+       <div class="col-md-12">
+        <span class="d-block" style="font-size: 13px;display: unset !important;">${capitalizeFirstCharacter(e.listName.replace('accountType','Account Type '))}:</span>
+        <select class="custom-select" id="${e.listName}">
+         ${generateOptions(sortedLists,e.listName)}
+        </select>
+       </div>
+      </div>
+     `;
+    }
+   });
+  }
+  html += `
+    <div class="row" style="margin-top:25px">
+     <div class="col-md" style="text-align:center;">
+      <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="submitAccounts('${containerID}','add');"><i class="feather icon-check-circle"></i>&nbsp;Submit</button>
+      <button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Cancel</button>
+     </div>
+    </div>
+   </div>`;
+  returnObj.payload = html;
+  return returnObj;
+ } catch (e) {
+  return defaultErrorHandler(e);
+ } finally {}
+}
+
+/*
 function refreshAccountList () {
  //Refresh list
  axios({
@@ -141,87 +260,6 @@ async function generateEditAccountEntryPrompt (obj) {
  } finally {}
 }
 
-//Object received from server
-async function generateAddAccountPrompt () {
- let returnObj = {"status": "success","message": "success","payload": ""};
- try {
-  let containerID = 'accountItemContainer';
-  let lists = await axios({
-   method: 'get',
-   url: 'api/get/list/all',
-  })
-   .then((response) => {
-    return response.data;
-   })
-   .catch((e) => popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv));
-
-  //Takes an array of lists;
-  function generateOptions (arr,listName) {
-   if (!isNonEmptyArray(arr)) throw 'Invalid Array';
-   if (!isString(listName)) throw 'Invalid String';
-   let options = '';
-   for (let i = 0; i < arr.length; i++) {
-    if (listName == arr[i].listName) {
-     let sortedList = arr[i].list.sort();
-     for (let o = 0; o < sortedList.length; o++) {
-      options += `<option value="${sortedList[o]}">${sortedList[o].toUpperCase()}</option>`;
-     }
-    }
-   }
-   return options;
-  }
-  let inputFields = ['accountName','accountDescription'];
-  let sortedLists = (() => {
-   if (lists.payload.length >= 1) {
-    return lists.payload.sort();
-   } else {
-    return [];
-   }
-  })();
-  let html = `<div id="${containerID}">`;
-  await inputFields.forEach((e,i) => {
-   html += `
-    <div class="row" style="margin-bottom: 5px;">
-     <div class="col-md-12">
-      <span class="d-block" style="font-size: 13px;display: unset !important;">${e.replace('account','')}:</span>
-      <input type="text" class="form-control" id="${e}">
-     </div>
-    </div>
-   `;
-  });
-  if (sortedLists.length == 0) {
-   throw 'Empty List Payload';
-  } else {
-   await sortedLists.forEach((e,i) => {
-    if (e.listName.match(/institution|accountTypePrimary|accountTypeSecondary/g)){
-     html += `
-      <div class="row" style="margin-bottom: 5px;">
-       <div class="col-md-12">
-        <span class="d-block" style="font-size: 13px;display: unset !important;">${capitalizeFirstCharacter(e.listName.replace('accountType','Account Type '))}:</span>
-        <select class="custom-select" id="${e.listName}">
-         ${generateOptions(sortedLists,e.listName)}
-        </select>
-       </div>
-      </div>
-     `;
-    }
-   });
-  }
-  html += `
-    <div class="row" style="margin-top:25px">
-     <div class="col-md" style="text-align:center;">
-      <button type="button" class="btn btn-icon btn-rounded btn-outline-success" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="submitAccounts('${containerID}','add');"><i class="feather icon-check-circle"></i>&nbsp;Submit</button>
-      <button type="button" class="btn btn-icon btn-rounded btn-outline-danger" style="width: auto;height: 30px;padding: 3px 10px;cursor: pointer;" onclick="Swal.close();"><i class="feather icon-x-circle"></i>&nbsp;Cancel</button>
-     </div>
-    </div>
-   </div>`;
-  returnObj.payload = html;
-  return returnObj;
- } catch (e) {
-  return defaultErrorHandler(e);
- } finally {}
-}
-
 async function editAccountPrompt (responseObj,accountUUID) {
  let returnObj = {"status": "","message": "","payload": ""};
  try {
@@ -258,43 +296,6 @@ async function editAccountPrompt (responseObj,accountUUID) {
   returnObj.message = "success message";
   returnObj.payload = "";
   return returnObj;
- } catch (e) {
-  return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
- } finally {}
-}
-
-async function addAccountPrompt () {
- let returnObj = {"status": "","message": "","payload": ""};
- try {
-  let result = await generateAddAccountPrompt();
-  if (result.status == 'failure') {
-   Swal.fire({
-    icon: 'error',
-    title: 'Error Generating Prompt',
-    target: `#${pageSpecificTargetDiv}`,
-    allowEscapeKey: true,
-    customClass: {
-      container: 'position-absolute lowerzindex'
-    },
-    allowOutsideClick: true,
-    showConfirmButton: false,
-    html: `Error: ${result.message}`
-   });
-  }
-  if (result.status == 'success') {
-   Swal.fire({
-    icon: 'info',
-    title: 'Add Account',
-    target: `#${pageSpecificTargetDiv}`,
-    allowEscapeKey: true,
-    customClass: {
-     container: 'position-absolute lowerzindex'
-    },
-    allowOutsideClick: true,
-    showConfirmButton: false,
-    html: result.payload
-   });
-  }
  } catch (e) {
   return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
  } finally {}
@@ -437,51 +438,6 @@ async function submitAccounts(containerDivID,type,accountUUID) {
  } catch (e) {
   return popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
  } finally {}
-/*
- let allDivSelectElements = containingDiv.querySelectorAll('select');
- let arrayOfAccountsObjs = [];
- let validationCheck = {
-  "status":true,
-  "listName":[]
- }
- allDivSelectElements.forEach((e,i) => {
-  let targetElement = document.getElementById(`${e.id}Title`);
-  targetElement.style.color = "#545454";
-  let listObj = {
-   "listName":"",
-   "listNameLong":"",
-   "list":[]
-  };
-  listObj.listName = e.id;
-  listObj.listNameLong = document.getElementById(`${e.id}Title`).innerHTML.replace(':','');
-  for (let oi = 0; oi < e.options.length; oi++) {
-   listObj.list.push(e.options[oi].value);
-  }
-  if (listObj.list.length == 0) {
-   validationCheck.status = false;
-   validationCheck.listName.push(`${e.id}Title`)
-  }
-  arrayOfAccountsObjs.push(listObj);
- });
- if (validationCheck.status) {
-  generateAccountItemsHTML(arrayOfAccountsObjs);
-  Swal.close();
- } else {
-  validationCheck.listName.forEach((e,i) => {
-   let targetElement = document.getElementById(e);
-   targetElement.style.color = "red";
-  });
- }
- console.log(arrayOfAccountsObjs);
- axios({
-  method: 'post',
-  url: 'api/add/list',
-  data: arrayOfAccountsObjs
- })
-  .then((response) => {
-   console.log(response)
-  });
-*/
 }
 
 function editAccountItem (accountUUID) {
@@ -526,4 +482,4 @@ async function deleteAccountItem (accountUUID) {
   defaultErrorHandler(e);
  } finally {}
 }
-
+*/

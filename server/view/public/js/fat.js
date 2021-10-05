@@ -121,7 +121,7 @@ function defaultToastNotification (options) {
    title: (options.title ? options.title:'No Message Set'),
    position: 'top-end',
    showConfirmButton: false,
-   timer: (options.timer ? options.timer:1000),
+   timer: (options.timer ? options.timer:3000),
    timerProgressBar: (options.timerProgressBar ? options.timerProgressBar:true),
    didOpen: (toast) => {
     toast.addEventListener('mouseenter', Swal.stopTimer)

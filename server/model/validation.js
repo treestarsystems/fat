@@ -56,8 +56,8 @@ const accountEntryValidation = joi.object({
  entryType: joi.string()
   .label('Entry Type')
   .required(),
- balance: joi.number()
-  .label('Balance')
+ value: joi.number()
+  .label('Value')
   .min(0),
 });
 

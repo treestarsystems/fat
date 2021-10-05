@@ -35,6 +35,10 @@ function pagesEndpoint (app) {
   res.render('form-modify-account', {title: 'Modify Account', layout: 'admin', customJS: ["public/js/fat-form-modify-account.js"]});
  });
 
+ app.get('/modify-entry', (req, res) => {
+  res.render('form-modify-entry', {title: 'Modify Entries', layout: 'admin', customJS: ["public/js/fat-form-modify-entry.js"]});
+ });
+
  app.get('/ie', (req, res) => {
   res.render('ie', {title: 'Incompatible Browser', layout: 'login', customJS: ["public/js/fat-user-accounts.js"]});
  });
