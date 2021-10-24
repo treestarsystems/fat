@@ -84,66 +84,60 @@ async function generateAddEntryPrompt () {
  let returnObj = {"status": "success","message": "success","payload": ""};
  try {
   let containerID = 'accountEntriesItemContainer';
-  let lists = await axios({
+  let accounts = await axios({
    method: 'get',
-   url: 'api/get/list/all',
+   url: 'api/get/account/all',
   })
    .then((response) => {
+    if (response.data.status == 'failure') throw response.data.message;
     return response.data;
    })
-   .catch((e) => popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv));
+   .catch((e) => {
+    popupErrorHandler(defaultErrorHandler(e),pageSpecificTargetDiv);
+    throw e;
+   });
 
-  //Takes an array of lists;
-  function generateOptions (arr,listName) {
+  //Takes an array of accounts;
+
+  function generateOptions (arr) {
    if (!isNonEmptyArray(arr)) throw 'Invalid Array';
-   if (!isString(listName)) throw 'Invalid String';
    let options = '';
-   for (let i = 0; i < arr.length; i++) {
-    if (listName == arr[i].listName) {
-     let sortedList = arr[i].list.sort();
-     for (let o = 0; o < sortedList.length; o++) {
-      options += `<option value="${sortedList[o]}">${sortedList[o].toUpperCase()}</option>`;
-     }
-    }
+   for (i of arr) {
+    options += `<option value="${i.accountName}">${i.accountName.toUpperCase()}</option>`;
    }
    return options;
   }
-  let inputFields = ['accountName','accountDescription'];
-  let sortedLists = (() => {
-   if (lists.payload.length >= 1) {
-    return lists.payload.sort();
-   } else {
-    return [];
+  let inputFields = ['entryName','entryDescription','entryValue'];
+  let sortedAccounts = (() => {
+   if (accounts.payload.length > 0) {
+    return accounts.payload.sort(sortAccountNames);
    }
+   return [];
   })();
   let html = `<div id="${containerID}">`;
   await inputFields.forEach((e,i) => {
    html += `
     <div class="row" style="margin-bottom: 5px;">
      <div class="col-md-12">
-      <span class="d-block" style="font-size: 13px;display: unset !important;">${e.replace('account','')}:</span>
+      <span class="d-block" style="font-size: 13px;display: unset !important;">${e.replace('entry','')}:</span>
       <input type="text" class="form-control" id="${e}">
      </div>
     </div>
    `;
   });
-  if (sortedLists.length == 0) {
+  if (sortedAccounts.length == 0) {
    throw 'Empty List Payload';
   } else {
-   await sortedLists.forEach((e,i) => {
-    if (e.listName.match(/institution|accountTypePrimary|accountTypeSecondary/g)){
-     html += `
-      <div class="row" style="margin-bottom: 5px;">
-       <div class="col-md-12">
-        <span class="d-block" style="font-size: 13px;display: unset !important;">${capitalizeFirstCharacter(e.listName.replace('accountType','Account Type '))}:</span>
-        <select class="custom-select" id="${e.listName}">
-         ${generateOptions(sortedLists,e.listName)}
-        </select>
-       </div>
-      </div>
-     `;
-    }
-   });
+   html += `
+    <div class="row" style="margin-bottom: 5px;">
+     <div class="col-md-12">
+      <span class="d-block" style="font-size: 13px;display: unset !important;">Account:</span>
+      <select class="custom-select" id="accountNameSelect">
+       ${generateOptions(sortedAccounts)}
+      </select>
+     </div>
+    </div>
+   `;
   }
   html += `
     <div class="row" style="margin-top:25px">

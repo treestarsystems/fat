@@ -134,5 +134,17 @@ function defaultToastNotification (options) {
  } finally {}
 }
 
+function sortAccountNames (a,b) {
+ let nameA = a.accountName.toUpperCase();
+ let nameB = b.accountName.toUpperCase();
+ if (nameA < nameB) {
+  return -1;
+ }
+ if (nameA > nameB) {
+  return 1;
+ }
+ return 0;
+}
+
 showActiveNavigation();
 
